@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Okhotsk Logistics | JDM & Yahoo Auctions</title>
     
-    <!-- Подключаем библиотеки (React, Tailwind, Icons) -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Подключаем библиотеки с защитой от ошибок cross-origin -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -22,7 +22,12 @@
     </style>
 </head>
 <body class="bg-slate-50">
-    <div id="root"></div>
+    <!-- Текст внутри root виден только пока React не загрузился -->
+    <div id="root">
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #666;">
+            Загрузка Okhotsk Logistics...
+        </div>
+    </div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -78,27 +83,35 @@
           return (
             <div className={`min-h-screen ${lang === 'ja' ? 'font-noto' : ''}`}>
               {/* Навигация */}
-              <nav className={`fixed w-full z-50 transition-all ${scrolled || view !== 'home' ? 'glass-nav shadow-md py-4' : 'bg-transparent py-6 text-white'}`}>
+              <nav className={`fixed w-full z-50 transition-all ${scrolled || view !== 'home' ? 'glass-nav shadow-md py-4 text-slate-900' : 'bg-transparent py-6 text-white'}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                   <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('home')}>
                     <div className="bg-red-600 text-white p-2 rounded-lg rotate-3 shadow-lg"><i className="fa-solid fa-anchor"></i></div>
-                    <span className={`text-xl font-black uppercase tracking-tighter ${scrolled || view !== 'home' ? 'text-slate-900' : 'text-white'}`}>OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
+                    <span className="text-xl font-black uppercase tracking-tighter">OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
                   </div>
                   <div className="hidden md:flex gap-8 font-bold">
-                    <button onClick={() => setView('home')} className={`hover:text-red-600 ${view === 'home' ? 'text-red-500' : ''}`}>{t.home}</button>
-                    <button onClick={() => setView('auction')} className={`hover:text-red-600 ${view === 'auction' ? 'text-red-500' : ''}`}>{t.auction}</button>
-                    <button onClick={() => setView('contact')} className={`hover:text-red-600 ${view === 'contact' ? 'text-red-500' : ''}`}>{t.contact}</button>
+                    <button onClick={() => setView('home')} className={`hover:text-red-600 transition-colors ${view === 'home' ? 'text-red-500' : ''}`}>{t.home}</button>
+                    <button onClick={() => setView('auction')} className={`hover:text-red-600 transition-colors ${view === 'auction' ? 'text-red-500' : ''}`}>{t.auction}</button>
+                    <button onClick={() => setView('contact')} className={`hover:text-red-600 transition-colors ${view === 'contact' ? 'text-red-500' : ''}`}>{t.contact}</button>
                   </div>
-                  <select onChange={(e) => setLang(e.target.value)} value={lang} className="bg-slate-200 text-slate-900 rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
-                    <option value="ru">RU</option><option value="en">EN</option><option value="ja">JP</option>
-                  </select>
+                  <div className="flex items-center gap-4">
+                    <select 
+                      onChange={(e) => setLang(e.target.value)} 
+                      value={lang} 
+                      className="bg-white/20 backdrop-blur border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer text-slate-900"
+                    >
+                      <option value="ru">RU</option>
+                      <option value="en">EN</option>
+                      <option value="ja">JP</option>
+                    </select>
+                  </div>
                 </div>
               </nav>
 
               <main>
                 {/* Главная страница */}
                 {view === 'home' && (
-                  <section className="page-fade pt-48 pb-32 bg-slate-900 text-white text-center px-6 relative overflow-hidden">
+                  <section className="page-fade pt-48 pb-32 bg-slate-900 text-white text-center px-6 relative overflow-hidden min-h-screen flex items-center justify-center">
                     <div className="absolute inset-0 opacity-20 pointer-events-none">
                       <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px]"></div>
                     </div>
@@ -117,7 +130,9 @@
                 {/* Страница аукционов */}
                 {view === 'auction' && (
                   <div className="page-fade pt-32 pb-20 max-w-7xl mx-auto px-6">
-                    <h2 className="text-4xl font-black mb-12 flex items-center gap-3"><i className="fa-solid fa-gavel text-red-600"></i> {t.aucTitle}</h2>
+                    <h2 className="text-4xl font-black mb-12 flex items-center gap-3">
+                      <i className="fa-solid fa-gavel text-red-600"></i> {t.aucTitle}
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {demoItems.map(i => (
                         <div key={i.id} className="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-xl transition-all group">
@@ -168,15 +183,17 @@
                 <p className="text-white font-black uppercase tracking-widest mb-2 italic">Okhotsk Logistics 株式会社</p>
                 <p className="text-xs max-w-sm mx-auto opacity-60">{t.footer}</p>
                 <div className="flex justify-center gap-6 mt-8 text-xl text-white/30">
-                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer"></i>
-                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer"></i>
+                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer transition-colors"></i>
+                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer transition-colors"></i>
                 </div>
               </footer>
             </div>
           );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
+        // Рендерим приложение
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
         root.render(<App />);
     </script>
 </body>
