@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okhotsk Logistics | JDM & Yahoo Auctions</title>
+    <title>Okhotsk Logistics | Real-time JDM Portal</title>
     
-    <!-- Подключаем библиотеки с защитой от ошибок cross-origin -->
+    <!-- Подключаем всё необходимое -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
@@ -18,14 +18,15 @@
         .font-noto { font-family: 'Noto Sans JP', sans-serif; }
         .page-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .loader { border-top-color: #ef4444; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-slate-50">
-    <!-- Текст внутри root виден только пока React не загрузился -->
+<body class="bg-slate-50 text-slate-900">
     <div id="root">
         <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #666;">
-            Загрузка Okhotsk Logistics...
+            Инициализация Okhotsk Logistics...
         </div>
     </div>
 
@@ -35,47 +36,86 @@
         const App = () => {
           const [view, setView] = useState('home'); 
           const [lang, setLang] = useState('ru'); 
-          const [scrolled, setScrolled] = useState(false);
+          const [isScrolled, setIsScrolled] = useState(false);
+          const [searchQuery, setSearchQuery] = useState('');
+          const [loading, setLoading] = useState(false);
+          const [auctions, setAuctions] = useState([
+            { id: 1, title: "RAYS Volk Racing TE37 SL 18\"", price: "¥215,000", time: "01:10:45", img: "https://images.unsplash.com/photo-1620882618956-62ce1d6430b2?q=80&w=800" },
+            { id: 2, title: "Skyline R34 OEM Front Bumper", price: "¥42,000", time: "14:15:00", img: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=800" },
+            { id: 3, title: "Nismo Shift Knob Black", price: "¥9,500", time: "00:45:12", img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800" }
+          ]);
 
-          const translations = {
+          const apiKey = ""; // Ключ подставляется автоматически средой
+
+          const dictionary = {
             ru: {
-              home: "Главная", auction: "Аукционы", contact: "Контакты",
-              title: "Японское качество у вас дома",
-              sub: "Ваш партнер в Токио и на Хоккайдо. Запчасти, JDM и экспорт напрямую от дилеров.",
-              cta1: "В каталог Yahoo", cta2: "Написать нам",
-              aucTitle: "Аукционы Yahoo! Japan",
-              bid: "Ставка:", time: "Осталось:", btn: "Участвовать",
+              navHome: "Главная", navAuction: "Аукционы", navContact: "Контакты",
+              heroTitle: "Японское качество у вас дома",
+              heroSub: "Ваш партнер в Токио и на Хоккайдо. Запчасти, JDM и экспорт напрямую от дилеров.",
+              ctaAuction: "В каталог Yahoo", ctaContact: "Написать нам",
+              aucTitle: "Поиск на Yahoo! Japan",
+              aucSub: "Введите запрос, чтобы найти реальные лоты прямо сейчас.",
+              searchPlaceholder: "Например: BBS wheels, R34 bumper...",
+              bid: "Ставка:", time: "Осталось:", btnBid: "Участвовать",
               footer: "Okhotsk Logistics 株式会社 — Официальный экспорт из Японии."
             },
             en: {
-              home: "Home", auction: "Auctions", contact: "Contact",
-              title: "Japanese Quality at Your Door",
-              sub: "Your partner in Tokyo and Hokkaido. Parts, JDM, and machinery directly from dealers.",
-              cta1: "Yahoo Catalog", cta2: "Contact Us",
-              aucTitle: "Yahoo! Japan Auctions",
-              bid: "Bid:", time: "Time left:", btn: "Bid Now",
+              navHome: "Home", navAuction: "Auctions", navContact: "Contact",
+              heroTitle: "Japanese Quality at Your Door",
+              heroSub: "Your partner in Tokyo and Hokkaido. Parts, JDM, and machinery directly from dealers.",
+              ctaAuction: "Yahoo Catalog", ctaContact: "Contact Us",
+              aucTitle: "Yahoo! Japan Search",
+              aucSub: "Search for real live lots on Yahoo Auctions Japan.",
+              searchPlaceholder: "Example: BBS wheels, R34 bumper...",
+              bid: "Bid:", time: "Time left:", btnBid: "Bid Now",
               footer: "Okhotsk Logistics Co., Ltd. — Export from Japan."
             },
             ja: {
-              home: "ホーム", auction: "ヤフオク!", contact: "お問い合わせ",
-              title: "日本品質を世界中へお届け",
-              sub: "東京と北海道の公式パートナー。部品、JDM、機械の輸出代行。",
-              cta1: "ヤフオクを見る", cta2: "お問い合わせ",
-              aucTitle: "ヤフオク! 開催中",
-              bid: "現在価格:", time: "残り時間:", btn: "入札する",
+              navHome: "ホーム", navAuction: "ヤフオク!", navContact: "お問い合わせ",
+              heroTitle: "日本品質を世界中へお届けします",
+              heroSub: "東京と北海道に拠点を置く公式パートナー。部品、JDM、機械の輸出代行。",
+              ctaAuction: "ヤフオクを見る", ctaContact: "お問い合わせ",
+              aucTitle: "ヤフオク! 検索",
+              aucSub: "ヤフオクのリアルタイム商品を検索します。",
+              searchPlaceholder: "例: BBS ホイール, R34 バンパー...",
+              bid: "現在価格:", time: "残り時間:", btnBid: "入札する",
               footer: "Okhotsk Logistics 株式会社 — 日本からの輸出業者。"
             }
           };
 
-          const t = translations[lang];
+          const t = dictionary[lang];
 
-          const demoItems = [
-            { id: 1, name: "RAYS Volk Racing TE37 SL 18\"", price: "¥210,000", time: "01:15:00", img: "https://images.unsplash.com/photo-1620882618956-62ce1d6430b2?q=80&w=800" },
-            { id: 2, name: "Skyline R34 OEM Front Bumper", price: "¥45,000", time: "12:30:00", img: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=800" }
-          ];
+          const handleSearch = async (e) => {
+            if (e) e.preventDefault();
+            if (!searchQuery) return;
+            setLoading(true);
+
+            try {
+              const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `Найди актуальные лоты на Yahoo Auctions Japan по запросу: "${searchQuery}". Верни список из 3-4 лотов. Для каждого лота укажи: заголовок (title), цену в иенах (price), примерное время до конца (time), и ссылку на изображение товара (img). Ответ верни строго в формате JSON: [{"title": "...", "price": "...", "time": "...", "img": "..."}]` }] }],
+                  tools: [{ "google_search": {} }],
+                  generationConfig: { responseMimeType: "application/json" }
+                })
+              });
+
+              const result = await response.json();
+              const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) {
+                const data = JSON.parse(text);
+                setAuctions(data);
+              }
+            } catch (error) {
+              console.error("Ошибка поиска:", error);
+            } finally {
+              setLoading(false);
+            }
+          };
 
           useEffect(() => {
-            const handleScroll = () => setScrolled(window.scrollY > 40);
+            const handleScroll = () => setIsScrolled(window.scrollY > 40);
             window.addEventListener('scroll', handleScroll);
             return () => window.removeEventListener('scroll', handleScroll);
           }, []);
@@ -83,69 +123,81 @@
           return (
             <div className={`min-h-screen ${lang === 'ja' ? 'font-noto' : ''}`}>
               {/* Навигация */}
-              <nav className={`fixed w-full z-50 transition-all ${scrolled || view !== 'home' ? 'glass-nav shadow-md py-4 text-slate-900' : 'bg-transparent py-6 text-white'}`}>
+              <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled || view !== 'home' ? 'glass-nav shadow-lg py-4' : 'bg-transparent py-6 text-white'}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                  <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('home')}>
-                    <div className="bg-red-600 text-white p-2 rounded-lg rotate-3 shadow-lg"><i className="fa-solid fa-anchor"></i></div>
-                    <span className="text-xl font-black uppercase tracking-tighter">OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
+                  <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('home')}>
+                    <div className="bg-red-600 text-white w-10 h-10 flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-0 transition-transform shadow-lg"><i className="fa-solid fa-anchor"></i></div>
+                    <span className={`text-xl font-black uppercase tracking-tighter ${isScrolled || view !== 'home' ? 'text-slate-900' : 'text-white'}`}>OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
                   </div>
-                  <div className="hidden md:flex gap-8 font-bold">
-                    <button onClick={() => setView('home')} className={`hover:text-red-600 transition-colors ${view === 'home' ? 'text-red-500' : ''}`}>{t.home}</button>
-                    <button onClick={() => setView('auction')} className={`hover:text-red-600 transition-colors ${view === 'auction' ? 'text-red-500' : ''}`}>{t.auction}</button>
-                    <button onClick={() => setView('contact')} className={`hover:text-red-600 transition-colors ${view === 'contact' ? 'text-red-500' : ''}`}>{t.contact}</button>
+                  
+                  <div className={`hidden md:flex gap-8 font-bold ${isScrolled || view !== 'home' ? 'text-slate-600' : 'text-white/80'}`}>
+                    <button onClick={() => setView('home')} className={`hover:text-red-600 ${view === 'home' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navHome}</button>
+                    <button onClick={() => setView('auction')} className={`hover:text-red-600 ${view === 'auction' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navAuction}</button>
+                    <button onClick={() => setView('contact')} className={`hover:text-red-600 ${view === 'contact' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navContact}</button>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <select 
-                      onChange={(e) => setLang(e.target.value)} 
-                      value={lang} 
-                      className="bg-white/20 backdrop-blur border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer text-slate-900"
-                    >
-                      <option value="ru">RU</option>
-                      <option value="en">EN</option>
-                      <option value="ja">JP</option>
+
+                  <div className="flex gap-4">
+                    <select onChange={(e) => setLang(e.target.value)} value={lang} className="bg-slate-200 border-none rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
+                      <option value="ru">RU</option><option value="en">EN</option><option value="ja">JP</option>
                     </select>
                   </div>
                 </div>
               </nav>
 
               <main>
-                {/* Главная страница */}
                 {view === 'home' && (
-                  <section className="page-fade pt-48 pb-32 bg-slate-900 text-white text-center px-6 relative overflow-hidden min-h-screen flex items-center justify-center">
-                    <div className="absolute inset-0 opacity-20 pointer-events-none">
-                      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px]"></div>
-                    </div>
-                    <div className="relative z-10">
-                      <h1 className="text-5xl md:text-8xl font-black mb-6 italic tracking-tighter uppercase">OKHOTSK <span className="text-red-600">LOGISTICS</span></h1>
-                      <p className="text-2xl md:text-4xl font-bold mb-10">{t.title}</p>
-                      <p className="max-w-xl mx-auto text-slate-400 mb-12 italic text-lg">{t.sub}</p>
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onClick={() => setView('auction')} className="bg-red-600 px-10 py-5 rounded-full font-black text-xl hover:scale-105 transition-transform shadow-xl shadow-red-600/20">{t.cta1}</button>
-                        <button onClick={() => setView('contact')} className="bg-white/10 border border-white/20 px-10 py-5 rounded-full font-black text-xl hover:bg-white/20 transition-all">{t.cta2}</button>
+                  <div className="page-fade">
+                    <section className="pt-48 pb-32 bg-slate-900 text-white relative overflow-hidden text-center px-6 min-h-screen flex items-center justify-center">
+                      <div className="absolute inset-0 opacity-20 pointer-events-none">
+                        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px]"></div>
                       </div>
-                    </div>
-                  </section>
+                      <div className="relative z-10">
+                        <h1 className="text-5xl md:text-8xl font-black mb-6 italic tracking-tight uppercase">OKHOTSK <span className="text-red-600">LOGISTICS</span></h1>
+                        <p className="text-2xl md:text-4xl font-bold mb-8">{t.heroTitle}</p>
+                        <p className="max-w-2xl mx-auto text-slate-400 text-lg mb-12 italic">{t.heroSub}</p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                          <button onClick={() => setView('auction')} className="bg-red-600 hover:bg-red-700 px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-red-600/20">{t.ctaAuction}</button>
+                          <button onClick={() => setView('contact')} className="bg-white/10 hover:bg-white/20 border border-white/20 px-10 py-5 rounded-full font-black text-xl transition-all">{dictionary[lang].ctaContact}</button>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
                 )}
 
-                {/* Страница аукционов */}
                 {view === 'auction' && (
                   <div className="page-fade pt-32 pb-20 max-w-7xl mx-auto px-6">
-                    <h2 className="text-4xl font-black mb-12 flex items-center gap-3">
-                      <i className="fa-solid fa-gavel text-red-600"></i> {t.aucTitle}
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {demoItems.map(i => (
-                        <div key={i.id} className="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-xl transition-all group">
-                          <div className="h-64 overflow-hidden relative bg-slate-100">
-                            <img src={i.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div className="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+                      <div className="max-w-xl">
+                        <h2 className="text-4xl font-black mb-4 flex items-center gap-3"><i className="fa-solid fa-search text-red-600"></i> {t.aucTitle}</h2>
+                        <p className="text-slate-500 text-lg">{t.aucSub}</p>
+                      </div>
+                      <form onSubmit={handleSearch} className="w-full md:w-auto flex-grow max-w-md relative">
+                        <input 
+                          type="text" 
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder={t.searchPlaceholder}
+                          className="w-full pl-6 pr-16 py-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-red-600 outline-none shadow-sm"
+                        />
+                        <button disabled={loading} className="absolute right-2 top-2 bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors">
+                          {loading ? <div className="w-5 h-5 border-2 loader rounded-full"></div> : <i className="fa-solid fa-arrow-right"></i>}
+                        </button>
+                      </form>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {auctions.map((i, index) => (
+                        <div key={index} className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl transition-all group page-fade">
+                          <div className="h-60 overflow-hidden relative bg-slate-100">
+                            <img src={i.img || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="p-6">
-                            <h3 className="font-bold text-xl mb-6">{i.name}</h3>
+                            <h3 className="font-bold text-lg mb-6 h-14 overflow-hidden leading-tight">{i.title}</h3>
                             <div className="flex justify-between border-t border-slate-100 pt-4">
-                              <div><p className="text-slate-400 text-xs font-bold uppercase tracking-wider">{t.bid}</p><p className="text-2xl font-black">{i.price}</p></div>
-                              <div className="text-right"><p className="text-slate-400 text-xs font-bold uppercase tracking-wider">{t.time}</p><p className="text-red-600 font-bold">{i.time}</p></div>
+                              <div><p className="text-slate-400 text-xs uppercase font-bold">{t.bid}</p><p className="text-2xl font-black">{i.price}</p></div>
+                              <div className="text-right"><p className="text-slate-400 text-xs uppercase font-bold">{t.time}</p><p className="text-red-600 font-bold">{i.time}</p></div>
                             </div>
-                            <button className="w-full bg-slate-900 text-white py-4 rounded-2xl mt-6 font-bold hover:bg-red-600 transition-colors shadow-lg">{t.btn}</button>
+                            <button className="w-full bg-slate-900 text-white py-4 rounded-2xl mt-6 font-bold hover:bg-red-600 transition-colors shadow-lg">{t.btnBid}</button>
                           </div>
                         </div>
                       ))}
@@ -153,47 +205,52 @@
                   </div>
                 )}
 
-                {/* Страница контактов */}
                 {view === 'contact' && (
-                  <div className="page-fade pt-32 pb-20 max-w-4xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-black mb-12 uppercase">{t.contact}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
-                        <i className="fa-solid fa-location-dot text-red-600 text-3xl mb-4"></i>
-                        <h4 className="font-black mb-1 uppercase tracking-widest">TOKYO</h4>
-                        <p className="text-slate-500 text-sm italic">Ojima, Koto-ku, 1-2-1</p>
+                  <div className="page-fade pt-32 pb-20 max-w-5xl mx-auto px-6">
+                    <h2 className="text-4xl font-black mb-12 text-center">Связаться с нами</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                      <div className="space-y-8 bg-white p-10 rounded-3xl border shadow-sm">
+                        <div className="flex gap-5">
+                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-map-pin"></i></div>
+                          <div><h4 className="font-black text-lg">Офис (Токио)</h4><p className="text-slate-500 italic">1-2-1 Ojima, Koto City, Tokyo</p></div>
+                        </div>
+                        <div className="flex gap-5">
+                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-phone"></i></div>
+                          <div><h4 className="font-black text-lg">Телефон</h4><p className="text-slate-500 font-bold">080-5134-9760</p></div>
+                        </div>
+                        <div className="flex gap-5">
+                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-envelope"></i></div>
+                          <div><h4 className="font-black text-lg">Email</h4><p className="text-slate-500 italic">okhotsklogistics@gmail.com</p></div>
+                        </div>
                       </div>
-                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
-                        <i className="fa-solid fa-phone text-red-600 text-3xl mb-4"></i>
-                        <h4 className="font-black mb-1 uppercase tracking-widest">PHONE</h4>
-                        <p className="text-slate-500 text-sm">080-5134-9760</p>
-                      </div>
-                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
-                        <i className="fa-solid fa-envelope text-red-600 text-3xl mb-4"></i>
-                        <h4 className="font-black mb-1 uppercase tracking-widest">EMAIL</h4>
-                        <p className="text-slate-500 text-sm">okhotsklogistics@gmail.com</p>
+                      <div className="bg-slate-900 text-white p-10 rounded-3xl shadow-xl">
+                        <h3 className="text-2xl font-bold mb-6 italic">Оставить заявку</h3>
+                        <div className="space-y-4">
+                          <input type="text" placeholder="Имя" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-red-600" />
+                          <textarea placeholder="Что вы ищете?" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl h-32 outline-none focus:border-red-600"></textarea>
+                          <button className="w-full bg-red-600 py-4 rounded-xl font-black text-lg shadow-lg hover:bg-red-700 transition-all">ОТПРАВИТЬ</button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
               </main>
 
-              {/* Футер */}
-              <footer className="bg-slate-900 text-slate-500 py-12 px-6 border-t border-slate-800 mt-20 text-center">
-                <p className="text-white font-black uppercase tracking-widest mb-2 italic">Okhotsk Logistics 株式会社</p>
-                <p className="text-xs max-w-sm mx-auto opacity-60">{t.footer}</p>
-                <div className="flex justify-center gap-6 mt-8 text-xl text-white/30">
-                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer transition-colors"></i>
-                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer transition-colors"></i>
+              <footer className="bg-slate-900 text-slate-500 py-12 px-6 border-t border-slate-800 mt-20 text-center md:text-left">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                  <span className="text-white font-black uppercase tracking-widest text-lg italic">Okhotsk Logistics 株式会社</span>
+                  <p className="text-sm max-w-sm">{t.footer}</p>
+                  <div className="flex gap-6 text-2xl">
+                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer"></i>
+                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer"></i>
+                  </div>
                 </div>
               </footer>
             </div>
           );
         };
 
-        // Рендерим приложение
-        const rootElement = document.getElementById('root');
-        const root = ReactDOM.createRoot(rootElement);
+        const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
 </body>
