@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okhotsk Logistics | Japan Export Official</title>
+    <title>Okhotsk Logistics | Официальный сайт</title>
     
-    <!-- Подключаем всё для красоты -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -13,49 +12,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: white; margin: 0; }
         .font-jp { font-family: 'Noto Sans JP', sans-serif; }
         
-        .hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), 
-                        url('https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=2000');
+        .hero-section {
+            background: linear-gradient(rgba(2, 6, 23, 0.75), rgba(2, 6, 23, 0.95)), 
+                        url('https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2000'); /* [Изображение JDM авто] */
             background-size: cover;
             background-position: center;
         }
 
-        .about-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
-                        url('https://images.unsplash.com/photo-1516383740770-fbcc5cbece03?q=80&w=2000');
+        .about-section-bg {
+            background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)), 
+                        url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2000'); /* [Изображение JDM двигателя] */
             background-size: cover;
             background-position: center;
         }
 
-        .nav-link {
+        .nav-btn {
             position: relative;
-            transition: all 0.3s ease;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-link::after {
+        
+        .nav-btn::after {
             content: '';
             position: absolute;
-            bottom: -4px;
+            bottom: -6px;
             left: 0;
             width: 0;
-            height: 3px;
+            height: 4px;
             background: #ef4444;
             transition: width 0.3s ease;
         }
-        .nav-link:hover::after { width: 100%; }
         
-        .card-blur {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .nav-btn:hover::after { width: 100%; }
+        .nav-btn:hover { color: #ef4444; transform: scale(1.05); }
 
-        .animate-fade { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.4s ease;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: #ef4444; background: rgba(30, 41, 59, 0.6); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-up { animation: slideUp 0.8s ease-out forwards; }
+        
+        .text-glow { text-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
     </style>
 </head>
 <body>
@@ -66,146 +75,205 @@
 
         const App = () => {
           const [view, setView] = useState('home');
-          const [scrolled, setScrolled] = useState(false);
+          const [lang, setLang] = useState('ru');
+          const [isScrolled, setIsScrolled] = useState(false);
+
+          const dict = {
+            ru: {
+              home: "Главная", about: "О компании", contact: "Контакты",
+              h1_1: "JDM", h1_2: "PARTS",
+              hero_sub: "Запчасти и техника напрямую из Японии. Мы работаем, чтобы вы получали лучшее.",
+              btn_service: "О нашем сервисе",
+              about_title: "НАШ ПУТЬ",
+              about_desc: "Okhotsk Logistics 株式会社 была создана в 2026 году. Мы любим своё дело и ценим доверие каждого клиента.",
+              card1_t: "Внимание к деталям", card1_d: "Мы тщательно проверяем каждую позицию, как для себя. Весь товар проходит строгий отбор перед отправкой.",
+              card2_t: "Надёжность", card2_d: "Ваш груз в надёжных руках. Мы обеспечиваем бережную упаковку и сопровождение на всех этапах пути.",
+              card3_t: "Открытость", card3_d: "Офисы в Токио и Энгару позволяют нам быть максимально эффективными и всегда доступными для связи.",
+              contact_h: "СВЯЖИТЕСЬ С НАМИ",
+              contact_sub: "Мы всегда рады вашему письму или звонку! Напишите нам, и мы с удовольствием поможем вам найти то, что вы ищете в Японии.",
+              phone_label: "Будем рады вашему звонку", email_label: "Будем рады вашему письму", office_label: "Наш офис в Токио",
+              footer_sub: "Hokkaido • Tokyo • Качество Японии • 2026",
+              footer_soul: "Мы всегда рады общению с вами"
+            },
+            en: {
+              home: "Home", about: "About Us", contact: "Contact",
+              h1_1: "JDM", h1_2: "SUPPLY",
+              hero_sub: "Parts and machinery direct from Japan. We work to ensure you get the very best.",
+              btn_service: "Our Service",
+              about_title: "OUR MISSION",
+              about_desc: "Okhotsk Logistics Co., Ltd. was established in 2026. We love what we do and value each client's trust.",
+              card1_t: "Attention to Detail", card1_d: "We carefully inspect every single item as if for ourselves. All goods pass strict selection before shipping.",
+              card2_t: "Reliability", card2_d: "Your cargo is in safe hands. We provide careful packaging and professional support at every step.",
+              card3_t: "Accessibility", card3_d: "Offices in Tokyo and Engaru allow us to be highly efficient and always available for your requests.",
+              contact_h: "CONTACT US",
+              contact_sub: "We are always happy to hear from you! Contact us, and we will be glad to help you find what you need in Japan.",
+              phone_label: "We'd be glad for your call", email_label: "We'd be glad for your email", office_label: "Our Tokyo Office",
+              footer_sub: "Hokkaido • Tokyo • Japan Quality • 2026",
+              footer_soul: "We are always happy to chat with you"
+            },
+            ja: {
+              home: "ホーム", about: "会社概要", contact: "お問い合わせ",
+              h1_1: "JDM", h1_2: "パーツ",
+              hero_sub: "日本直送の部品と機械。お客様に最高の品質をお届けするために努力しています。",
+              btn_service: "サービスについて",
+              about_title: "私たちの歩み",
+              about_desc: "Okhotsk Logistics 株式会社は2026年に設立されました。私たちは自分たちの仕事を愛し、お客様一人ひとりの信頼を大切にしています。",
+              card1_t: "細部へのこだわり", card1_d: "自分のもののように、一点一点丁寧に検品します。すべての商品は発送前に厳しい選別を通過します。",
+              card2_t: "信頼性", card2_d: "お客様の荷物は安全な手に委ねられています。輸送のあらゆる段階で丁寧な梱包とサポートを提供します。",
+              card3_t: "オープンな姿勢", card3_d: "東京と遠軽のオフィスにより、効率を最大化し、常に連絡が取れる体制を整えています。",
+              contact_h: "お問い合わせ",
+              contact_sub: "皆様からのご連絡を心よりお待ちしております！お気軽にご相談ください。日本で探しているものを見つけるお手伝いをいたします。",
+              phone_label: "お電話お待ちしております", email_label: "メールお待ちしております", office_label: "東京本社",
+              footer_sub: "北海道 • 東京 • 日本品質 • 2026年設立",
+              footer_soul: "皆様とのコミュニケーションを大切にしています"
+            }
+          }[lang];
 
           useEffect(() => {
-            const handleScroll = () => setScrolled(window.scrollY > 50);
+            const handleScroll = () => setIsScrolled(window.scrollY > 50);
             window.addEventListener('scroll', handleScroll);
             return () => window.removeEventListener('scroll', handleScroll);
           }, []);
 
-          const Nav = () => (
-            <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-slate-900/95 py-4 shadow-2xl backdrop-blur-md' : 'bg-transparent py-8'}`}>
-              <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                <div className="flex items-center gap-4 cursor-pointer" onClick={() => setView('home')}>
-                  <div className="bg-red-600 text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg shadow-red-600/30 transform -rotate-3">
-                    <i className="fa-solid fa-ship text-2xl"></i>
+          const Navigation = () => (
+            <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-slate-950/95 py-6 shadow-2xl' : 'bg-transparent py-10'}`}>
+              <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
+                <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setView('home')}>
+                  <div className="bg-red-600 text-white w-14 h-14 flex items-center justify-center rounded-2xl shadow-[0_0_25px_rgba(220,38,38,0.4)] group-hover:rotate-12 transition-transform">
+                    <i className="fa-solid fa-gear text-3xl"></i>
                   </div>
-                  <div className="leading-none">
-                    <span className="text-2xl font-black italic tracking-tighter block uppercase">OKHOTSK</span>
-                    <span className="text-red-600 text-sm font-bold tracking-[0.3em] uppercase">LOGISTICS</span>
+                  <div>
+                    <h1 className="text-3xl font-black italic tracking-tighter leading-none uppercase">OKHOTSK</h1>
+                    <p className="text-red-600 text-xs font-black tracking-[0.4em] uppercase">LOGISTICS</p>
                   </div>
                 </div>
 
-                <div className="hidden md:flex gap-12">
-                  <button onClick={() => setView('home')} className={`nav-link text-lg font-black uppercase tracking-widest italic ${view === 'home' ? 'text-red-600' : 'text-white'}`}>Главная</button>
-                  <button onClick={() => setView('about')} className={`nav-link text-lg font-black uppercase tracking-widest italic ${view === 'about' ? 'text-red-600' : 'text-white'}`}>О компании</button>
-                  <button onClick={() => setView('contact')} className={`nav-link text-lg font-black uppercase tracking-widest italic ${view === 'contact' ? 'text-red-600' : 'text-white'}`}>Контакты</button>
-                </div>
-
-                <div className="flex gap-4">
-                  <a href="https://wa.me/818051349760" target="_blank" className="bg-green-600 hover:bg-green-700 w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-lg">
-                    <i className="fa-brands fa-whatsapp text-2xl"></i>
-                  </a>
+                <div className="flex gap-12 items-center">
+                  <div className="hidden lg:flex gap-16">
+                    <button onClick={() => setView('home')} className={`nav-btn text-xl ${view === 'home' ? 'text-red-600' : 'text-white'}`}>{dict.home}</button>
+                    <button onClick={() => setView('about')} className={`nav-btn text-xl ${view === 'about' ? 'text-red-600' : 'text-white'}`}>{dict.about}</button>
+                    <button onClick={() => setView('contact')} className={`nav-btn text-xl ${view === 'contact' ? 'text-red-600' : 'text-white'}`}>{dict.contact}</button>
+                  </div>
+                  
+                  <div className="flex bg-white/10 p-1 rounded-xl backdrop-blur-md border border-white/5">
+                    {['ru', 'en', 'ja'].map((l) => (
+                      <button
+                        key={l}
+                        onClick={() => setLang(l)}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${lang === l ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                      >
+                        {l}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </nav>
           );
 
           return (
-            <div className="min-h-screen">
-              <Nav />
+            <div className={`min-h-screen selection:bg-red-600 selection:text-white ${lang === 'ja' ? 'font-jp' : ''}`}>
+              <Navigation />
 
               <main>
+                {/* ГЛАВНАЯ */}
                 {view === 'home' && (
-                  <section className="hero-bg min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full bg-slate-950/20 z-0"></div>
-                    <div className="relative z-10 text-center animate-fade">
-                      <h2 className="text-red-600 font-black text-2xl md:text-3xl mb-4 italic tracking-[0.3em] uppercase">Hokkaido • Tokyo • Global</h2>
-                      <h1 className="text-7xl md:text-[10rem] font-black italic tracking-tighter leading-none mb-10 uppercase">
-                        EXPRESS <span className="text-red-600">JAPAN</span>
+                  <section className="hero-section min-h-screen flex items-center justify-center px-8 relative overflow-hidden text-white">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950 z-0"></div>
+                    <div className="relative z-10 text-center animate-up">
+                      <p className="text-red-500 font-black text-xl md:text-2xl mb-6 tracking-[0.5em] uppercase italic drop-shadow-lg">Hokkaido • Tokyo • Global</p>
+                      <h1 className="text-7xl md:text-[12rem] font-black italic tracking-tighter leading-none mb-12 uppercase drop-shadow-2xl text-glow">
+                        {dict.h1_1} <span className="text-red-600 font-black">{dict.h1_2}</span>
                       </h1>
-                      <p className="text-xl md:text-3xl font-light italic opacity-80 uppercase tracking-widest max-w-4xl mx-auto mb-16 leading-relaxed">
-                        Официальный экспорт автомобилей, запчастей и спецтехники напрямую из Японии.
+                      <p className="text-xl md:text-4xl font-light italic opacity-90 uppercase tracking-widest max-w-5xl mx-auto mb-16 leading-tight">
+                        {dict.hero_sub}
                       </p>
-                      <div className="flex flex-col md:flex-row gap-8 justify-center">
-                        <button onClick={() => setView('about')} className="bg-white text-slate-950 px-12 py-6 rounded-full font-black text-xl uppercase italic tracking-tighter hover:bg-red-600 hover:text-white transition-all shadow-2xl">
-                          Узнать больше
-                        </button>
-                        <button onClick={() => setView('contact')} className="border-2 border-white/30 backdrop-blur-md px-12 py-6 rounded-full font-black text-xl uppercase italic tracking-tighter hover:bg-white hover:text-slate-950 transition-all">
-                          Связаться с нами
+                      <div className="flex justify-center">
+                        <button onClick={() => setView('about')} className="bg-white text-slate-950 px-16 py-7 rounded-2xl font-black text-2xl uppercase italic tracking-tighter hover:bg-red-600 hover:text-white transition-all shadow-2xl active:scale-95">
+                          {dict.btn_service}
                         </button>
                       </div>
                     </div>
                   </section>
                 )}
 
+                {/* О КОМПАНИИ */}
                 {view === 'about' && (
-                  <section className="animate-fade">
-                    <div className="about-bg py-48 px-6 text-center">
-                      <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-8 underline decoration-red-600 decoration-8 underline-offset-8">О компании</h2>
-                      <p className="max-w-3xl mx-auto text-2xl font-light italic leading-relaxed opacity-90">
-                        Okhotsk Logistics 株式会社 — это ваш надежный мост между японскими аукционами и мировым рынком. Мы базируемся в Токио и на Хоккайдо, обеспечивая полный цикл логистики.
+                  <section className="animate-up">
+                    <div className="about-section-bg py-64 px-8 text-center text-white">
+                      <h2 className="text-7xl md:text-9xl font-black italic uppercase tracking-tighter mb-10 underline decoration-red-600 decoration-8 underline-offset-[20px]">{dict.about_title}</h2>
+                      <p className="max-w-4xl mx-auto text-2xl md:text-4xl font-light italic leading-relaxed mb-10 opacity-90">
+                        {dict.about_desc}
                       </p>
                     </div>
 
-                    <div className="max-w-7xl mx-auto px-6 -mt-24 pb-32">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div className="card-blur p-12 rounded-[40px] shadow-2xl group hover:border-red-600 transition-all">
-                          <i className="fa-solid fa-gem text-5xl text-red-600 mb-8"></i>
-                          <h3 className="text-3xl font-black italic mb-6 uppercase tracking-tight">Качество JDM</h3>
-                          <p className="text-slate-400 leading-relaxed font-medium">Только проверенные лоты с аукционов Yahoo, USS, TAA. Мы знаем, как отличить настоящий раритет от хлама.</p>
+                    <div className="max-w-7xl mx-auto px-8 -mt-32 pb-40 text-white">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-white">
+                        <div className="glass-card p-14 rounded-[50px] shadow-2xl border-b-4 border-b-transparent hover:border-b-red-600">
+                          <div className="w-20 h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-4xl text-red-600 mb-10 shadow-inner">
+                            <i className="fa-solid fa-microchip"></i>
+                          </div>
+                          <h3 className="text-3xl font-black italic mb-6 uppercase">{dict.card1_t}</h3>
+                          <p className="text-slate-400 text-lg font-medium leading-relaxed italic">{dict.card1_d}</p>
                         </div>
-                        <div className="card-blur p-12 rounded-[40px] shadow-2xl group hover:border-red-600 transition-all">
-                          <i className="fa-solid fa-anchor text-5xl text-red-600 mb-8"></i>
-                          <h3 className="text-3xl font-black italic mb-6 uppercase tracking-tight">Логистика</h3>
-                          <p className="text-slate-400 leading-relaxed font-medium">Собственные площадки для хранения и погрузки. Отправка контейнеров и Ro-Ro из крупнейших портов Японии.</p>
+                        <div className="glass-card p-14 rounded-[50px] shadow-2xl border-t-4 border-t-red-600">
+                          <div className="w-20 h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-4xl text-red-600 mb-10 shadow-inner">
+                            <i className="fa-solid fa-box-open"></i>
+                          </div>
+                          <h3 className="text-3xl font-black italic mb-6 uppercase">{dict.card2_t}</h3>
+                          <p className="text-slate-400 text-lg font-medium leading-relaxed italic">{dict.card2_d}</p>
                         </div>
-                        <div className="card-blur p-12 rounded-[40px] shadow-2xl group hover:border-red-600 transition-all">
-                          <i className="fa-solid fa-handshake text-5xl text-red-600 mb-8"></i>
-                          <h3 className="text-3xl font-black italic mb-6 uppercase tracking-tight">Честность</h3>
-                          <p className="text-slate-400 leading-relaxed font-medium">Прозрачные инвойсы, официальные договора и полная фото-опись вашего груза на каждом этапе.</p>
+                        <div className="glass-card p-14 rounded-[50px] shadow-2xl border-b-4 border-b-transparent hover:border-b-red-600">
+                          <div className="w-20 h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-4xl text-red-600 mb-10 shadow-inner">
+                            <i className="fa-solid fa-earth-asia"></i>
+                          </div>
+                          <h3 className="text-3xl font-black italic mb-6 uppercase">{dict.card3_t}</h3>
+                          <p className="text-slate-400 text-lg font-medium leading-relaxed italic">{dict.card3_d}</p>
                         </div>
                       </div>
                     </div>
                   </section>
                 )}
 
+                {/* КОНТАКТЫ */}
                 {view === 'contact' && (
-                  <section className="animate-fade pt-48 pb-32 px-6 max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-                      <div>
-                        <h2 className="text-7xl font-black italic uppercase tracking-tighter mb-10 leading-none">БУДЕМ <span className="text-red-600">НА СВЯЗИ</span></h2>
-                        <p className="text-2xl text-slate-400 font-light italic mb-12">Мы всегда на связи в рабочее время по Токио. Пишите в мессенджеры или на почту.</p>
+                  <section className="animate-up pt-52 pb-40 px-8 max-w-7xl mx-auto text-white">
+                    <div className="flex flex-col items-center text-center mb-24">
+                        <h2 className="text-8xl font-black italic uppercase tracking-tighter mb-8 leading-none">
+                           <span className="text-red-600">{dict.contact_h}</span>
+                        </h2>
+                        <p className="text-2xl md:text-3xl text-slate-400 font-light italic max-w-3xl leading-relaxed">
+                            {dict.contact_sub}
+                        </p>
+                    </div>
+
+                    <div className="max-w-6xl mx-auto space-y-12">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        {/* ТЕЛЕФОН */}
+                        <div className="glass-card p-12 rounded-[50px] flex gap-10 items-center">
+                          <div className="w-24 h-24 bg-red-600/10 rounded-[35px] flex items-center justify-center text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0"><i className="fa-solid fa-phone-volume"></i></div>
+                          <div>
+                            <p className="text-red-600 font-black uppercase text-sm tracking-[0.3em] mb-2">{dict.phone_label}</p>
+                            <p className="text-4xl font-black italic tracking-tighter">080-5134-9760</p>
+                          </div>
+                        </div>
                         
-                        <div className="space-y-10">
-                          <div className="flex gap-8 items-center">
-                            <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center text-3xl text-red-600 shadow-xl border border-white/5"><i className="fa-solid fa-phone"></i></div>
-                            <div>
-                              <p className="text-slate-500 font-bold uppercase text-xs tracking-widest mb-1">Телефон в Японии</p>
-                              <p className="text-3xl font-black italic tracking-tight">080-5134-9760</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-8 items-center">
-                            <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center text-3xl text-red-600 shadow-xl border border-white/5"><i className="fa-solid fa-envelope"></i></div>
-                            <div>
-                              <p className="text-slate-500 font-bold uppercase text-xs tracking-widest mb-1">Email</p>
-                              <p className="text-2xl font-black italic tracking-tight underline decoration-red-600 underline-offset-4">okhotsklogistics@gmail.com</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-8 items-center">
-                            <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center text-3xl text-red-600 shadow-xl border border-white/5"><i className="fa-solid fa-location-dot"></i></div>
-                            <div>
-                              <p className="text-slate-500 font-bold uppercase text-xs tracking-widest mb-1">Главный офис</p>
-                              <p className="text-2xl font-black italic tracking-tight uppercase">Tokyo, Koto City, Ojima 1-2-1</p>
-                            </div>
+                        {/* АДРЕС */}
+                        <div className="glass-card p-12 rounded-[50px] flex gap-10 items-center">
+                          <div className="w-24 h-24 bg-red-600/10 rounded-[35px] flex items-center justify-center text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0"><i className="fa-solid fa-map-location-dot"></i></div>
+                          <div>
+                            <p className="text-red-600 font-black uppercase text-sm tracking-[0.3em] mb-2">{dict.office_label}</p>
+                            <p className="text-3xl font-black italic tracking-tighter uppercase leading-tight">1-2-1 Ojima, Koto City, Tokyo</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="card-blur p-12 rounded-[50px] shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-                        <h3 className="text-3xl font-black italic mb-10 uppercase tracking-tighter">Оставить запрос</h3>
-                        <div className="space-y-6">
-                          <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 italic">Ваше имя</label>
-                            <input type="text" className="w-full bg-slate-900/50 border border-white/10 p-5 rounded-2xl outline-none focus:border-red-600 transition-all font-bold" placeholder="Михаил" />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 italic">Сообщение</label>
-                            <textarea className="w-full bg-slate-900/50 border border-white/10 p-5 rounded-2xl outline-none focus:border-red-600 transition-all font-bold h-40" placeholder="Интересует экспорт спецтехники с Хоккайдо..."></textarea>
-                          </div>
-                          <button className="w-full bg-red-600 py-6 rounded-2xl font-black text-xl uppercase italic tracking-tighter hover:bg-red-700 transition-all shadow-xl shadow-red-600/30">Отправить</button>
+                      {/* ДЛИННОЕ ОКНО С ПОЧТОЙ */}
+                      <div className="glass-card p-12 rounded-[50px] flex flex-col md:flex-row gap-10 items-center justify-center w-full">
+                        <div className="w-24 h-24 bg-red-600/10 rounded-[35px] flex items-center justify-center text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0"><i className="fa-solid fa-at"></i></div>
+                        <div className="text-center md:text-left">
+                          <p className="text-red-600 font-black uppercase text-sm tracking-[0.3em] mb-2">{dict.email_label}</p>
+                          <p className="text-4xl md:text-5xl font-black italic tracking-tight uppercase">okhotsklogistics@gmail.com</p>
                         </div>
                       </div>
                     </div>
@@ -213,16 +281,13 @@
                 )}
               </main>
 
-              <footer className="bg-slate-950 py-24 px-6 border-t border-white/5 text-center">
+              <footer className="bg-slate-950 py-32 px-8 border-t border-white/5 text-center text-white">
                 <div className="max-w-7xl mx-auto">
-                  <span className="text-5xl font-black italic uppercase tracking-tighter block mb-4">OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.6em] mb-12 italic">Официальный сервис экспорта из Японии • Основано в 2024</p>
-                  <div className="flex justify-center gap-12 text-3xl text-white/20 mb-12">
-                    <i className="fa-brands fa-whatsapp hover:text-green-500 transition-colors cursor-pointer"></i>
-                    <i className="fa-brands fa-telegram hover:text-blue-400 transition-colors cursor-pointer"></i>
-                    <i className="fa-brands fa-instagram hover:text-pink-500 transition-colors cursor-pointer"></i>
-                  </div>
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest">© 2026 Okhotsk Logistics Co., Ltd. • All Rights Reserved</p>
+                  <span className="text-6xl font-black italic uppercase tracking-tighter block mb-6">OKHOTSK <span className="text-red-600 font-black">LOGISTICS</span></span>
+                  <p className="text-sm text-slate-500 font-black uppercase tracking-[0.8em] mb-16 italic opacity-50 tracking-widest leading-loose">{dict.footer_sub}</p>
+                  <p className="text-xs font-black text-slate-800 uppercase tracking-widest italic opacity-40 leading-loose">
+                    © 2026 Okhotsk Logistics Co., Ltd. • {dict.footer_soul}
+                  </p>
                 </div>
               </footer>
             </div>
