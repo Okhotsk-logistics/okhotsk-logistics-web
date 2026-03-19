@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okhotsk Logistics | Real-time JDM Portal</title>
+    <title>Okhotsk Logistics | Yahoo API Portal</title>
     
     <!-- Подключаем всё необходимое -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,96 +19,96 @@
         .page-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .loader { border-top-color: #ef4444; animation: spinner 1.5s linear infinite; }
+        .loader { border-top-color: #ef4444; animation: spinner 1s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
-    <div id="root">
-        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #666;">
-            Инициализация Okhotsk Logistics...
-        </div>
-    </div>
+    <div id="root"></div>
 
     <script type="text/babel">
+        const YAHOO_CLIENT_ID = "dmVyPTIwMjUwNyZpZD1ta0pXWHNuY2ZpJmhhc2g9WW1JMk0yRTVPV0pqTURaa1lqVXpOUQ"; 
+        
         const { useState, useEffect } = React;
 
         const App = () => {
           const [view, setView] = useState('home'); 
           const [lang, setLang] = useState('ru'); 
           const [isScrolled, setIsScrolled] = useState(false);
-          const [searchQuery, setSearchQuery] = useState('');
+          const [query, setQuery] = useState('');
           const [loading, setLoading] = useState(false);
-          const [auctions, setAuctions] = useState([
-            { id: 1, title: "RAYS Volk Racing TE37 SL 18\"", price: "¥215,000", time: "01:10:45", img: "https://images.unsplash.com/photo-1620882618956-62ce1d6430b2?q=80&w=800" },
-            { id: 2, title: "Skyline R34 OEM Front Bumper", price: "¥42,000", time: "14:15:00", img: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=800" },
-            { id: 3, title: "Nismo Shift Knob Black", price: "¥9,500", time: "00:45:12", img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800" }
-          ]);
+          const [results, setResults] = useState([]);
+          const [error, setError] = useState(null);
 
-          const apiKey = ""; // Ключ подставляется автоматически средой
-
-          const dictionary = {
+          const t = {
             ru: {
               navHome: "Главная", navAuction: "Аукционы", navContact: "Контакты",
-              heroTitle: "Японское качество у вас дома",
-              heroSub: "Ваш партнер в Токио и на Хоккайдо. Запчасти, JDM и экспорт напрямую от дилеров.",
-              ctaAuction: "В каталог Yahoo", ctaContact: "Написать нам",
-              aucTitle: "Поиск на Yahoo! Japan",
-              aucSub: "Введите запрос, чтобы найти реальные лоты прямо сейчас.",
-              searchPlaceholder: "Например: BBS wheels, R34 bumper...",
-              bid: "Ставка:", time: "Осталось:", btnBid: "Участвовать",
-              footer: "Okhotsk Logistics 株式会社 — Официальный экспорт из Японии."
+              heroTitle: "Прямой доступ к аукционам Японии",
+              heroSub: "Используем официальное Yahoo API для поиска лучших JDM запчастей и техники.",
+              btnStart: "Начать поиск",
+              searchTitle: "Поиск через Yahoo! API",
+              searchPlaceholder: "Введите модель или деталь (напр. R34, BBS...)",
+              loading: "Связываемся с серверами Yahoo...",
+              bid: "Цена:", time: "Осталось:", btnBid: "Детали лота",
+              error: "Ошибка API. Возможно, нужно настроить CORS или проверить Client ID."
             },
             en: {
               navHome: "Home", navAuction: "Auctions", navContact: "Contact",
-              heroTitle: "Japanese Quality at Your Door",
-              heroSub: "Your partner in Tokyo and Hokkaido. Parts, JDM, and machinery directly from dealers.",
-              ctaAuction: "Yahoo Catalog", ctaContact: "Contact Us",
-              aucTitle: "Yahoo! Japan Search",
-              aucSub: "Search for real live lots on Yahoo Auctions Japan.",
-              searchPlaceholder: "Example: BBS wheels, R34 bumper...",
-              bid: "Bid:", time: "Time left:", btnBid: "Bid Now",
-              footer: "Okhotsk Logistics Co., Ltd. — Export from Japan."
+              heroTitle: "Direct Access to Japan Auctions",
+              heroSub: "Using official Yahoo API to find best JDM parts and machinery.",
+              btnStart: "Start Search",
+              searchTitle: "Yahoo! API Search",
+              searchPlaceholder: "Search query (e.g. R34, BBS...)",
+              loading: "Connecting to Yahoo servers...",
+              bid: "Price:", time: "Left:", btnBid: "Lot Details",
+              error: "API Error. Check CORS or Client ID."
             },
             ja: {
               navHome: "ホーム", navAuction: "ヤフオク!", navContact: "お問い合わせ",
-              heroTitle: "日本品質を世界中へお届けします",
-              heroSub: "東京と北海道に拠点を置く公式パートナー。部品、JDM、機械の輸出代行。",
-              ctaAuction: "ヤフオクを見る", ctaContact: "お問い合わせ",
-              aucTitle: "ヤフオク! 検索",
-              aucSub: "ヤフオクのリアルタイム商品を検索します。",
-              searchPlaceholder: "例: BBS ホイール, R34 バンパー...",
-              bid: "現在価格:", time: "残り時間:", btnBid: "入札する",
-              footer: "Okhotsk Logistics 株式会社 — 日本からの輸出業者。"
+              heroTitle: "ヤフオク! 直結ポータル",
+              heroSub: "公式APIを使用して、最高のJDMパーツや機械を見つけます。",
+              btnStart: "検索を開始",
+              searchTitle: "ヤフオク! 公式検索",
+              searchPlaceholder: "検索キーワード (例: R34, BBS...)",
+              loading: "Yahooサーバーに接続中...",
+              bid: "現在価格:", time: "残り時間:", btnBid: "詳細を見る",
+              error: "APIエラーが発生しました。"
             }
-          };
+          }[lang];
 
-          const t = dictionary[lang];
-
-          const handleSearch = async (e) => {
+          const handleYahooSearch = async (e) => {
             if (e) e.preventDefault();
-            if (!searchQuery) return;
+            if (!query.trim()) return;
+            
             setLoading(true);
-
+            setError(null);
+            
             try {
-              const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  contents: [{ parts: [{ text: `Найди актуальные лоты на Yahoo Auctions Japan по запросу: "${searchQuery}". Верни список из 3-4 лотов. Для каждого лота укажи: заголовок (title), цену в иенах (price), примерное время до конца (time), и ссылку на изображение товара (img). Ответ верни строго в формате JSON: [{"title": "...", "price": "...", "time": "...", "img": "..."}]` }] }],
-                  tools: [{ "google_search": {} }],
-                  generationConfig: { responseMimeType: "application/json" }
-                })
-              });
+              // Миша, это адрес официального API поиска Yahoo Japan
+              // Мы используем прокси-сервис cors-anywhere, если Yahoo будет блокировать прямой запрос
+              const proxy = "https://cors-anywhere.herokuapp.com/";
+              const apiUrl = `https://auctions.yahooapis.jp/AuctionWebService/V2/search?appid=${YAHOO_CLIENT_ID}&query=${encodeURIComponent(query)}&output=json`;
 
-              const result = await response.json();
-              const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (text) {
-                const data = JSON.parse(text);
-                setAuctions(data);
-              }
-            } catch (error) {
-              console.error("Ошибка поиска:", error);
+              const response = await fetch(proxy + apiUrl);
+              
+              if (!response.ok) throw new Error("API Response Error");
+              
+              const data = await response.json();
+              
+              // Обработка данных из формата Yahoo
+              const items = data?.ResultSet?.Result?.Item || [];
+              const formattedResults = items.map(item => ({
+                title: item.Title,
+                price: item.CurrentPrice + " ¥",
+                time: item.RemainingTime || "N/A",
+                img: item.Image || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800",
+                url: item.AuctionItemUrl
+              }));
+
+              setResults(formattedResults);
+            } catch (err) {
+              console.error("Yahoo API Error:", err);
+              setError(t.error);
             } finally {
               setLoading(false);
             }
@@ -123,42 +123,37 @@
           return (
             <div className={`min-h-screen ${lang === 'ja' ? 'font-noto' : ''}`}>
               {/* Навигация */}
-              <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled || view !== 'home' ? 'glass-nav shadow-lg py-4' : 'bg-transparent py-6 text-white'}`}>
+              <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled || view !== 'home' ? 'glass-nav shadow-md py-4' : 'bg-transparent py-6 text-white'}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                  <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('home')}>
-                    <div className="bg-red-600 text-white w-10 h-10 flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-0 transition-transform shadow-lg"><i className="fa-solid fa-anchor"></i></div>
+                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView('home')}>
+                    <div className="bg-red-600 text-white w-10 h-10 flex items-center justify-center rounded-xl rotate-3 shadow-lg"><i className="fa-solid fa-ship"></i></div>
                     <span className={`text-xl font-black uppercase tracking-tighter ${isScrolled || view !== 'home' ? 'text-slate-900' : 'text-white'}`}>OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
                   </div>
                   
-                  <div className={`hidden md:flex gap-8 font-bold ${isScrolled || view !== 'home' ? 'text-slate-600' : 'text-white/80'}`}>
-                    <button onClick={() => setView('home')} className={`hover:text-red-600 ${view === 'home' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navHome}</button>
-                    <button onClick={() => setView('auction')} className={`hover:text-red-600 ${view === 'auction' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navAuction}</button>
-                    <button onClick={() => setView('contact')} className={`hover:text-red-600 ${view === 'contact' ? 'text-red-600 underline underline-offset-8' : ''}`}>{t.navContact}</button>
+                  <div className="hidden md:flex gap-8 font-bold">
+                    <button onClick={() => setView('home')} className="hover:text-red-600 transition-colors">{t.navHome}</button>
+                    <button onClick={() => setView('auction')} className="hover:text-red-600 transition-colors">{t.navAuction}</button>
+                    <button onClick={() => setView('contact')} className="hover:text-red-600 transition-colors">{t.navContact}</button>
                   </div>
 
-                  <div className="flex gap-4">
-                    <select onChange={(e) => setLang(e.target.value)} value={lang} className="bg-slate-200 border-none rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
-                      <option value="ru">RU</option><option value="en">EN</option><option value="ja">JP</option>
-                    </select>
-                  </div>
+                  <select onChange={(e) => setLang(e.target.value)} value={lang} className="bg-slate-200 text-slate-900 rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
+                    <option value="ru">RU</option><option value="en">EN</option><option value="ja">JP</option>
+                  </select>
                 </div>
               </nav>
 
               <main>
                 {view === 'home' && (
                   <div className="page-fade">
-                    <section className="pt-48 pb-32 bg-slate-900 text-white relative overflow-hidden text-center px-6 min-h-screen flex items-center justify-center">
-                      <div className="absolute inset-0 opacity-20 pointer-events-none">
+                    <section className="pt-48 pb-32 bg-slate-900 text-white text-center px-6 min-h-screen flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 opacity-20">
                         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px]"></div>
                       </div>
                       <div className="relative z-10">
-                        <h1 className="text-5xl md:text-8xl font-black mb-6 italic tracking-tight uppercase">OKHOTSK <span className="text-red-600">LOGISTICS</span></h1>
+                        <h1 className="text-5xl md:text-8xl font-black mb-6 italic tracking-tight uppercase tracking-widest">OKHOTSK <span className="text-red-600">LOGISTICS</span></h1>
                         <p className="text-2xl md:text-4xl font-bold mb-8">{t.heroTitle}</p>
                         <p className="max-w-2xl mx-auto text-slate-400 text-lg mb-12 italic">{t.heroSub}</p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                          <button onClick={() => setView('auction')} className="bg-red-600 hover:bg-red-700 px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-red-600/20">{t.ctaAuction}</button>
-                          <button onClick={() => setView('contact')} className="bg-white/10 hover:bg-white/20 border border-white/20 px-10 py-5 rounded-full font-black text-xl transition-all">{dictionary[lang].ctaContact}</button>
-                        </div>
+                        <button onClick={() => setView('auction')} className="bg-red-600 hover:bg-red-700 px-12 py-6 rounded-full font-black text-2xl transition-all shadow-xl shadow-red-600/30">{t.btnStart}</button>
                       </div>
                     </section>
                   </div>
@@ -168,67 +163,78 @@
                   <div className="page-fade pt-32 pb-20 max-w-7xl mx-auto px-6">
                     <div className="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
                       <div className="max-w-xl">
-                        <h2 className="text-4xl font-black mb-4 flex items-center gap-3"><i className="fa-solid fa-search text-red-600"></i> {t.aucTitle}</h2>
-                        <p className="text-slate-500 text-lg">{t.aucSub}</p>
+                        <h2 className="text-4xl font-black mb-4 flex items-center gap-3"><i className="fa-solid fa-bolt text-yellow-400"></i> {t.searchTitle}</h2>
                       </div>
-                      <form onSubmit={handleSearch} className="w-full md:w-auto flex-grow max-w-md relative">
+                      <form onSubmit={handleYahooSearch} className="w-full md:w-auto flex-grow max-w-md relative">
                         <input 
                           type="text" 
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
                           placeholder={t.searchPlaceholder}
-                          className="w-full pl-6 pr-16 py-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-red-600 outline-none shadow-sm"
+                          className="w-full pl-6 pr-16 py-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-red-600 outline-none shadow-md"
                         />
-                        <button disabled={loading} className="absolute right-2 top-2 bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors">
-                          {loading ? <div className="w-5 h-5 border-2 loader rounded-full"></div> : <i className="fa-solid fa-arrow-right"></i>}
+                        <button disabled={loading} className="absolute right-2 top-2 bg-slate-900 text-white p-3 rounded-full hover:bg-red-600 transition-colors">
+                          {loading ? <div className="w-5 h-5 border-2 loader rounded-full"></div> : <i className="fa-solid fa-magnifying-glass"></i>}
                         </button>
                       </form>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                      {auctions.map((i, index) => (
-                        <div key={index} className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl transition-all group page-fade">
-                          <div className="h-60 overflow-hidden relative bg-slate-100">
-                            <img src={i.img || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                          </div>
-                          <div className="p-6">
-                            <h3 className="font-bold text-lg mb-6 h-14 overflow-hidden leading-tight">{i.title}</h3>
-                            <div className="flex justify-between border-t border-slate-100 pt-4">
-                              <div><p className="text-slate-400 text-xs uppercase font-bold">{t.bid}</p><p className="text-2xl font-black">{i.price}</p></div>
-                              <div className="text-right"><p className="text-slate-400 text-xs uppercase font-bold">{t.time}</p><p className="text-red-600 font-bold">{i.time}</p></div>
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 p-6 rounded-3xl mb-12 flex items-center gap-4">
+                        <i className="fa-solid fa-triangle-exclamation text-2xl"></i>
+                        <p className="font-bold">{error}</p>
+                      </div>
+                    )}
+
+                    {loading ? (
+                      <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <div className="w-12 h-12 border-4 loader rounded-full"></div>
+                        <p className="font-bold text-slate-500">{t.loading}</p>
+                      </div>
+                    ) : results.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {results.map((res, idx) => (
+                          <div key={idx} className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl transition-all group page-fade">
+                            <div className="h-56 overflow-hidden relative bg-slate-100">
+                              <img src={res.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="lot" />
                             </div>
-                            <button className="w-full bg-slate-900 text-white py-4 rounded-2xl mt-6 font-bold hover:bg-red-600 transition-colors shadow-lg">{t.btnBid}</button>
+                            <div className="p-5">
+                              <h3 className="font-bold text-sm mb-4 h-10 overflow-hidden leading-tight text-slate-800">{res.title}</h3>
+                              <div className="flex justify-between border-t border-slate-100 pt-3 mb-4">
+                                <div><p className="text-slate-400 text-[10px] uppercase font-bold">{t.bid}</p><p className="text-lg font-black text-slate-900">{res.price}</p></div>
+                                <div className="text-right"><p className="text-slate-400 text-[10px] uppercase font-bold">{t.time}</p><p className="text-red-600 font-bold text-xs">{res.time}</p></div>
+                              </div>
+                              <a href={res.url} target="_blank" className="block text-center w-full bg-slate-100 text-slate-900 py-3 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all">
+                                {t.btnBid}
+                              </a>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-32 bg-white rounded-3xl border border-dashed border-slate-300">
+                        <i className="fa-solid fa-boxes-stacked text-6xl text-slate-100 mb-6"></i>
+                        <p className="text-xl text-slate-300 font-medium">Введите запрос для поиска по Yahoo Japan</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {view === 'contact' && (
                   <div className="page-fade pt-32 pb-20 max-w-5xl mx-auto px-6">
-                    <h2 className="text-4xl font-black mb-12 text-center">Связаться с нами</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                      <div className="space-y-8 bg-white p-10 rounded-3xl border shadow-sm">
-                        <div className="flex gap-5">
-                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-map-pin"></i></div>
-                          <div><h4 className="font-black text-lg">Офис (Токио)</h4><p className="text-slate-500 italic">1-2-1 Ojima, Koto City, Tokyo</p></div>
-                        </div>
-                        <div className="flex gap-5">
-                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-phone"></i></div>
-                          <div><h4 className="font-black text-lg">Телефон</h4><p className="text-slate-500 font-bold">080-5134-9760</p></div>
-                        </div>
-                        <div className="flex gap-5">
-                          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl"><i className="fa-solid fa-envelope"></i></div>
-                          <div><h4 className="font-black text-lg">Email</h4><p className="text-slate-500 italic">okhotsklogistics@gmail.com</p></div>
-                        </div>
+                    <h2 className="text-4xl font-black mb-12 text-center uppercase tracking-widest">Контакты</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                      <div className="bg-white p-10 rounded-3xl border shadow-sm space-y-8">
+                        <div className="flex gap-4"><i className="fa-solid fa-map-pin text-red-600 text-2xl"></i><div><h4 className="font-bold text-lg">Токио</h4><p className="text-slate-500 italic">1-2-1 Ojima, Koto City</p></div></div>
+                        <div className="flex gap-4"><i className="fa-solid fa-phone text-red-600 text-2xl"></i><div><h4 className="font-bold text-lg">Телефон</h4><p className="text-slate-500">080-5134-9760</p></div></div>
+                        <div className="flex gap-4"><i className="fa-solid fa-envelope text-red-600 text-2xl"></i><div><h4 className="font-bold text-lg">Email</h4><p className="text-slate-500">okhotsklogistics@gmail.com</p></div></div>
                       </div>
-                      <div className="bg-slate-900 text-white p-10 rounded-3xl shadow-xl">
-                        <h3 className="text-2xl font-bold mb-6 italic">Оставить заявку</h3>
+                      <div className="bg-slate-900 text-white p-10 rounded-3xl shadow-2xl">
+                        <h3 className="text-2xl font-black mb-6 italic">Форма обратной связи</h3>
                         <div className="space-y-4">
-                          <input type="text" placeholder="Имя" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-red-600" />
-                          <textarea placeholder="Что вы ищете?" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl h-32 outline-none focus:border-red-600"></textarea>
-                          <button className="w-full bg-red-600 py-4 rounded-xl font-black text-lg shadow-lg hover:bg-red-700 transition-all">ОТПРАВИТЬ</button>
+                          <input type="text" placeholder="Ваше имя" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none" />
+                          <textarea placeholder="Опишите лот или деталь..." className="w-full p-4 bg-white/5 border border-white/10 rounded-xl h-32 outline-none"></textarea>
+                          <button className="w-full bg-red-600 py-4 rounded-xl font-black text-lg hover:bg-red-700 transition-all">ОТПРАВИТЬ</button>
                         </div>
                       </div>
                     </div>
@@ -236,14 +242,10 @@
                 )}
               </main>
 
-              <footer className="bg-slate-900 text-slate-500 py-12 px-6 border-t border-slate-800 mt-20 text-center md:text-left">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                  <span className="text-white font-black uppercase tracking-widest text-lg italic">Okhotsk Logistics 株式会社</span>
-                  <p className="text-sm max-w-sm">{t.footer}</p>
-                  <div className="flex gap-6 text-2xl">
-                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer"></i>
-                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer"></i>
-                  </div>
+              <footer className="bg-slate-900 text-slate-500 py-12 px-6 border-t border-slate-800 mt-20">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+                  <span className="text-white font-black uppercase text-lg italic tracking-widest">Okhotsk Logistics 株式会社</span>
+                  <p className="text-[10px] max-w-sm opacity-50 uppercase tracking-widest">Official Exporter • Tokyo • Hokkaido • JDM Culture</p>
                 </div>
               </footer>
             </div>
