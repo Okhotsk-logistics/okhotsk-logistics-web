@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Okhotsk Logistics | JDM & Yahoo Auctions</title>
     
-    <!-- Подключаем технологии -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Подключаем библиотеки (React, Tailwind, Icons) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,7 +18,7 @@
         .font-noto { font-family: 'Noto Sans JP', sans-serif; }
         .page-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .nav-glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -32,7 +32,7 @@
           const [lang, setLang] = useState('ru'); 
           const [scrolled, setScrolled] = useState(false);
 
-          const dict = {
+          const translations = {
             ru: {
               home: "Главная", auction: "Аукционы", contact: "Контакты",
               title: "Японское качество у вас дома",
@@ -62,9 +62,9 @@
             }
           };
 
-          const t = dict[lang];
+          const t = translations[lang];
 
-          const items = [
+          const demoItems = [
             { id: 1, name: "RAYS Volk Racing TE37 SL 18\"", price: "¥210,000", time: "01:15:00", img: "https://images.unsplash.com/photo-1620882618956-62ce1d6430b2?q=80&w=800" },
             { id: 2, name: "Skyline R34 OEM Front Bumper", price: "¥45,000", time: "12:30:00", img: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=800" }
           ];
@@ -77,8 +77,107 @@
 
           return (
             <div className={`min-h-screen ${lang === 'ja' ? 'font-noto' : ''}`}>
-              <nav className={`fixed w-full z-50 transition-all ${scrolled || view !== 'home' ? 'nav-glass shadow-md py-4' : 'bg-transparent py-6 text-white'}`}>
+              {/* Навигация */}
+              <nav className={`fixed w-full z-50 transition-all ${scrolled || view !== 'home' ? 'glass-nav shadow-md py-4' : 'bg-transparent py-6 text-white'}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                   <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('home')}>
-                    <div className="bg-red-600 text-white p-2 rounded-lg rotate-3"><i className="fa-solid fa-anchor"></i></div>
-                    <span className={`text-xl font-black uppercase tracking-tighter ${scrolled || view !== 'home' ? 'text-slate-900' : '
+                    <div className="bg-red-600 text-white p-2 rounded-lg rotate-3 shadow-lg"><i className="fa-solid fa-anchor"></i></div>
+                    <span className={`text-xl font-black uppercase tracking-tighter ${scrolled || view !== 'home' ? 'text-slate-900' : 'text-white'}`}>OKHOTSK <span className="text-red-600">LOGISTICS</span></span>
+                  </div>
+                  <div className="hidden md:flex gap-8 font-bold">
+                    <button onClick={() => setView('home')} className={`hover:text-red-600 ${view === 'home' ? 'text-red-500' : ''}`}>{t.home}</button>
+                    <button onClick={() => setView('auction')} className={`hover:text-red-600 ${view === 'auction' ? 'text-red-500' : ''}`}>{t.auction}</button>
+                    <button onClick={() => setView('contact')} className={`hover:text-red-600 ${view === 'contact' ? 'text-red-500' : ''}`}>{t.contact}</button>
+                  </div>
+                  <select onChange={(e) => setLang(e.target.value)} value={lang} className="bg-slate-200 text-slate-900 rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
+                    <option value="ru">RU</option><option value="en">EN</option><option value="ja">JP</option>
+                  </select>
+                </div>
+              </nav>
+
+              <main>
+                {/* Главная страница */}
+                {view === 'home' && (
+                  <section className="page-fade pt-48 pb-32 bg-slate-900 text-white text-center px-6 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-20 pointer-events-none">
+                      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px]"></div>
+                    </div>
+                    <div className="relative z-10">
+                      <h1 className="text-5xl md:text-8xl font-black mb-6 italic tracking-tighter uppercase">OKHOTSK <span className="text-red-600">LOGISTICS</span></h1>
+                      <p className="text-2xl md:text-4xl font-bold mb-10">{t.title}</p>
+                      <p className="max-w-xl mx-auto text-slate-400 mb-12 italic text-lg">{t.sub}</p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onClick={() => setView('auction')} className="bg-red-600 px-10 py-5 rounded-full font-black text-xl hover:scale-105 transition-transform shadow-xl shadow-red-600/20">{t.cta1}</button>
+                        <button onClick={() => setView('contact')} className="bg-white/10 border border-white/20 px-10 py-5 rounded-full font-black text-xl hover:bg-white/20 transition-all">{t.cta2}</button>
+                      </div>
+                    </div>
+                  </section>
+                )}
+
+                {/* Страница аукционов */}
+                {view === 'auction' && (
+                  <div className="page-fade pt-32 pb-20 max-w-7xl mx-auto px-6">
+                    <h2 className="text-4xl font-black mb-12 flex items-center gap-3"><i className="fa-solid fa-gavel text-red-600"></i> {t.aucTitle}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {demoItems.map(i => (
+                        <div key={i.id} className="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-xl transition-all group">
+                          <div className="h-64 overflow-hidden relative bg-slate-100">
+                            <img src={i.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          </div>
+                          <div className="p-6">
+                            <h3 className="font-bold text-xl mb-6">{i.name}</h3>
+                            <div className="flex justify-between border-t border-slate-100 pt-4">
+                              <div><p className="text-slate-400 text-xs font-bold uppercase tracking-wider">{t.bid}</p><p className="text-2xl font-black">{i.price}</p></div>
+                              <div className="text-right"><p className="text-slate-400 text-xs font-bold uppercase tracking-wider">{t.time}</p><p className="text-red-600 font-bold">{i.time}</p></div>
+                            </div>
+                            <button className="w-full bg-slate-900 text-white py-4 rounded-2xl mt-6 font-bold hover:bg-red-600 transition-colors shadow-lg">{t.btn}</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Страница контактов */}
+                {view === 'contact' && (
+                  <div className="page-fade pt-32 pb-20 max-w-4xl mx-auto px-6 text-center">
+                    <h2 className="text-4xl font-black mb-12 uppercase">{t.contact}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
+                        <i className="fa-solid fa-location-dot text-red-600 text-3xl mb-4"></i>
+                        <h4 className="font-black mb-1 uppercase tracking-widest">TOKYO</h4>
+                        <p className="text-slate-500 text-sm italic">Ojima, Koto-ku, 1-2-1</p>
+                      </div>
+                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
+                        <i className="fa-solid fa-phone text-red-600 text-3xl mb-4"></i>
+                        <h4 className="font-black mb-1 uppercase tracking-widest">PHONE</h4>
+                        <p className="text-slate-500 text-sm">080-5134-9760</p>
+                      </div>
+                      <div className="p-8 bg-white rounded-3xl border shadow-sm flex flex-col items-center">
+                        <i className="fa-solid fa-envelope text-red-600 text-3xl mb-4"></i>
+                        <h4 className="font-black mb-1 uppercase tracking-widest">EMAIL</h4>
+                        <p className="text-slate-500 text-sm">okhotsklogistics@gmail.com</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </main>
+
+              {/* Футер */}
+              <footer className="bg-slate-900 text-slate-500 py-12 px-6 border-t border-slate-800 mt-20 text-center">
+                <p className="text-white font-black uppercase tracking-widest mb-2 italic">Okhotsk Logistics 株式会社</p>
+                <p className="text-xs max-w-sm mx-auto opacity-60">{t.footer}</p>
+                <div className="flex justify-center gap-6 mt-8 text-xl text-white/30">
+                    <i className="fa-brands fa-whatsapp hover:text-green-500 cursor-pointer"></i>
+                    <i className="fa-brands fa-telegram hover:text-blue-400 cursor-pointer"></i>
+                </div>
+              </footer>
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
