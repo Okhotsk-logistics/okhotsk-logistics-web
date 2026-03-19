@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okhotsk Logistics | Worldwide JDM & Goods</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-noto-sans-jp { font-family: 'Noto Sans JP', sans-serif; }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+          const [isScrolled, setIsScrolled] = useState(false);
+          const [lang, setLang] = useState('en');
+
+          const t = {
+            en: {
+              navYahoo: "Yahoo! Auctions", navAbout: "About Us", navOrder: "Order Delivery",
+              heroTitle: "Authentic Japan delivered to you.",
+              heroDesc: "Your reliable bridge between Japanese dealers and the global market. Genuine auto parts from the Land of the Rising Sun.",
+              yahooTitle: "Yahoo! Auctions Live",
+              price: "Current bid:", timeLeft: "Time left:", bidBtn: "Place Bid"
+            },
+            ja: {
+              navYahoo: "ヤフオク!", navAbout: "会社概要", navOrder: "配送を依頼",
+              heroTitle: "本物の日本をあなたへ。",
+              heroDesc: "日本のディーラーとグローバル市場を結ぶ信頼の架け橋。純正自動車部品を日出づる国から直接お届けします。",
+              yahooTitle: "ヤフオク! リアルタイム入札",
+              price: "現在価格:", timeLeft: "残り時間:", bidBtn: "入札する"
+            }
+          };
+
+          const text = t[lang];
+          const mockAuctions = [
+            { id: "y1", title: "WORK Meister S1 3P 18x10.5J", price: "$1,650", timeLeft: "02:14:05", img: "https://images.unsplash.com/photo-1620882618956-62ce1d6430b2?q=80&w=800" },
+            { id: "y2", title: "Skyline GT-R R34 OEM Bumper", price: "$300", timeLeft: "11:45:20", img: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=800" }
+          ];
+
+          useEffect(() => {
+            const handleScroll = () => setIsScrolled(window.scrollY > 20);
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+          }, []);
+
+          return (
+            <div className={`min-h-screen bg-slate-50 ${lang === 'ja' ? 'font-noto-sans-jp' : ''}`}>
+              <nav className={`fixed w-full z-50 transition-all ${isScrolled ? 'bg-white shadow-sm py-3' : 'bg-transparent py-5'}`}>
+                <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-red-600 text-white p-2 rounded-lg"><i className="fa-solid fa-truck"></i></div>
+                    <span className={`text-xl font-black uppercase ${isScrolled ? 'text-slate-900' : 'text-white'}`}>Okhotsk <span className="text-red-600">Logistics</span></span>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <button onClick={() => setLang(lang === 'en' ? 'ja' : 'en')} className={`font-bold ${isScrolled ? 'text-slate-900' : 'text-white'}`}>{lang === 'en' ? 'JP' : 'EN'}</button>
+                    <button className="bg-red-600 text-white px-4 py-2 rounded-md font-bold">{text.navOrder}</button>
+                  </div>
+                </div>
+              </nav>
+
+              <section className="pt-48 pb-32 bg-slate-900 text-white text-center px-6">
+                <h1 className="text-5xl md:text-7xl font-black mb-6">{text.heroTitle}</h1>
+                <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10">{text.heroDesc}</p>
+              </section>
+
+              <section id="yahoo" className="py-24 max-w-7xl mx-auto px-6">
+                <h2 className="text-4xl font-black mb-12 flex items-center gap-3"><i className="fa-solid fa-gavel text-red-600"></i> {text.yahooTitle}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {mockAuctions.map(a => (
+                    <div key={a.id} className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                      <img src={a.img} className="w-full h-64 object-cover" />
+                      <div className="p-6">
+                        <h3 className="font-bold text-xl mb-4">{a.title}</h3>
+                        <div className="flex justify-between border-t pt-4">
+                          <div><p className="text-slate-500 text-sm">{text.price}</p><p className="text-2xl font-black">{a.price}</p></div>
+                          <div className="text-right"><p className="text-slate-500 text-sm">{text.timeLeft}</p><p className="text-red-600 font-bold">{a.timeLeft}</p></div>
+                        </div>
+                        <button className="w-full bg-slate-900 text-white py-3 rounded-xl mt-6 font-bold">{text.bidBtn}</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <footer className="bg-slate-900 text-white py-12 text-center">
+                <p>© 2026 Okhotsk Logistics 株式会社. Tokyo / Hokkaido</p>
+              </footer>
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
