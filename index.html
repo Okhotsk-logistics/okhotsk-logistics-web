@@ -17,18 +17,15 @@
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: white; margin: 0; }
         .font-jp { font-family: 'Noto Sans JP', sans-serif; }
         
-        .hero-section {
-            background: linear-gradient(rgba(2, 6, 23, 0.75), rgba(2, 6, 23, 0.95)), 
-                        url('https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2000');
+        /* ЕДИНЫЙ ФОН: Твой синий Nissan GT-R! 
+           Файл должен лежать рядом с index.html и называться gtr-bg.png 
+        */
+        .hero-section, .about-section-bg, .contact-section-bg {
+            background: linear-gradient(rgba(2, 6, 23, 0.6), rgba(2, 6, 23, 0.95)), 
+                        url('./gtr-bg.png');
             background-size: cover;
             background-position: center;
-        }
-
-        .about-section-bg {
-            background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)), 
-                        url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2000');
-            background-size: cover;
-            background-position: center;
+            transition: background-image 0.5s ease-in-out;
         }
 
         .nav-btn {
@@ -64,7 +61,7 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .animate-up { animation: slideUp 0.8s ease-out forwards; }
         
-        .text-glow { text-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+        .text-glow { text-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
 
         .sidebar-transition {
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -79,24 +76,43 @@
 
         const App = () => {
           const [view, setView] = useState('home');
-          const [lang, setLang] = useState('en');
+          const [lang, setLang] = useState('en'); // Английский по дефолту
           const [isScrolled, setIsScrolled] = useState(false);
           const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
           const dict = {
             ru: {
               home: "Главная", about: "О компании", contact: "Контакты",
-              h1_1: "JDM", h1_2: "PARTS",
+              h1_1: "JDM", h1_2: "SUPPLY",
               hero_sub: "Оригинальные автозапчасти и товары напрямую от японских поставщиков. Мы работаем, чтобы вы получали лучшее.",
-              btn_service: "О нашем сервисе",
-              about_title: "НАШ ПУТЬ",
-              about_desc: "Okhotsk Logistics 株式会社 была создана в 2026 году. Мы любим своё дело и ценим доверие каждого клиента.",
-              card1_t: "Внимание к деталям", card1_d: "Мы тщательно проверяем каждую позицию, как для себя. Весь товар проходит строгий отбор перед отправкой.",
-              card2_t: "Надёжность", card2_d: "Ваш груз в надёжных руках. Мы обеспечиваем бережную упаковку и сопровождение на всех этапах пути.",
-              card3_t: "Открытость", card3_d: "Офисы в Токио и Энгару позволяют нам быть максимально эффективными и всегда доступными для связи.",
+              btn_service: "О нашей компании",
+              
+              about_title: "ПРОФИЛЬ КОМПАНИИ",
+              about_desc: "Okhotsk Logistics 株式会社 — это ваш надежный мост между японскими поставщиками и глобальным рынком.",
+              about_prof_title: "Сфера деятельности",
+              about_prof_name: "Название компании", about_prof_name_v: "Okhotsk Logistics 株式会社",
+              about_prof_est: "Основана", about_prof_est_v: "10 февраля 2026 года",
+              about_prof_ceo: "CEO", about_prof_ceo_v: "Сергей Погребняк",
+              about_prof_biz: "Сфера деятельности", about_prof_biz_v: "Экспорт японских автозапчастей на международные рынки. Оптовая торговля и логистический консалтинг.",
+              about_prof_mis: "Наша Миссия", about_prof_mis_v: "«Мы открываем японское качество миру. Обеспечиваем бесперебойную логистику от локальных поставщиков в Японии до конечных покупателей».",
+              
+              log_title: "НАША ЛОГИСТИКА",
+              log_sub: "Двойной контроль и эффективность",
+              log_tokyo_t: "Токийский офис (Штаб-квартира)",
+              log_tokyo_d: "Расположенный в финансовом центре Японии, наш главный офис отвечает за оперативное взаимодействие с партнерами, заключение контрактов, маркетинг и управление международными транзакциями.",
+              log_hok_t: "Склад на Хоккайдо (Хаб консолидации)",
+              log_hok_d: "Собственный складской комплекс на севере Японии позволяет нам оптимизировать расходы на хранение габаритных автозапчастей. Здесь мы проводим тщательную проверку качества (検品), упаковку и консолидацию грузов перед экспортом.",
+              
               contact_h: "СВЯЖИТЕСЬ С НАМИ",
               contact_sub: "Мы всегда рады вашему письму или звонку! Напишите нам, и мы с удовольствием поможем вам найти то, что вы ищете в Японии.",
-              phone_label: "Будем рады вашему звонку", email_label: "Будем рады вашему письму", office_label: "Наш офис в Токио",
+              phone_label: "Будем рады вашему звонку", 
+              email_label: "Будем рады вашему письму", 
+              office_label: "Штаб-квартира (Токио)",
+              hub_label: "Хаб консолидации (Хоккайдо)",
+              hub_address: "〒099-0428 北海道紋別郡遠軽町西町3丁目3-165",
+              phone_note: "На связи в рабочее время (JST)",
+              office_note: "Для предложений, договоров и документооборота",
+              hub_note: "Исключительно для доставки и приема грузов",
               footer_sub: "Hokkaido • Tokyo • Качество Японии • 2026",
               footer_soul: "Мы всегда рады общению с вами"
             },
@@ -104,31 +120,69 @@
               home: "Home", about: "About Us", contact: "Contact",
               h1_1: "JDM", h1_2: "SUPPLY",
               hero_sub: "Premium car parts and goods directly from Japanese suppliers. We work to ensure you get the very best.",
-              btn_service: "Our Service",
-              about_title: "OUR MISSION",
-              about_desc: "Okhotsk Logistics Co., Ltd. was established in 2026. We love what we do and value each client's trust.",
-              card1_t: "Attention to Detail", card1_d: "We carefully inspect every single item as if for ourselves. All goods pass strict selection before shipping.",
-              card2_t: "Reliability", card2_d: "Your cargo is in safe hands. We provide careful packaging and professional support at every step.",
-              card3_t: "Accessibility", card3_d: "Offices in Tokyo and Engaru allow us to be highly efficient and always available for your requests.",
+              btn_service: "About Our Company",
+              
+              about_title: "COMPANY PROFILE",
+              about_desc: "Okhotsk Logistics Co., Ltd. is your reliable bridge between Japanese suppliers and the global market.",
+              about_prof_title: "Business Outline",
+              about_prof_name: "Company Name", about_prof_name_v: "Okhotsk Logistics Co., Ltd.",
+              about_prof_est: "Established", about_prof_est_v: "February 10, 2026",
+              about_prof_ceo: "CEO", about_prof_ceo_v: "Sergey Pogrebnyak",
+              about_prof_biz: "Business Area", about_prof_biz_v: "Export of Japanese auto parts to international markets. Wholesale trading and logistics consulting.",
+              about_prof_mis: "Our Mission", about_prof_mis_v: "\"We open Japanese quality to the world. Providing seamless logistics from local suppliers in Japan to end buyers globally.\"",
+              
+              log_title: "OUR LOGISTICS",
+              log_sub: "Dual Control & Maximum Efficiency",
+              log_tokyo_t: "Tokyo Office (Headquarters)",
+              log_tokyo_d: "Located in the financial center of Japan, our main office is responsible for partner relations, contract negotiations, marketing, and managing international transactions.",
+              log_hok_t: "Hokkaido Warehouse (Consolidation Hub)",
+              log_hok_d: "Our own warehouse complex in northern Japan allows us to optimize storage costs for bulky auto parts. Here we conduct thorough quality inspections, secure packaging, and cargo consolidation before export.",
+              
               contact_h: "CONTACT US",
               contact_sub: "We are always happy to hear from you! Contact us, and we will be glad to help you find what you need in Japan.",
-              phone_label: "We'd be glad for your call", email_label: "We'd be glad for your email", office_label: "Our Tokyo Office",
+              phone_label: "We'd be glad for your call", 
+              email_label: "We'd be glad for your email", 
+              office_label: "Headquarters (Tokyo)",
+              hub_label: "Consolidation Hub (Hokkaido)",
+              hub_address: "3-3-165 Nishimachi, Engaru, Mombetsu, Hokkaido 099-0428",
+              phone_note: "Available during business hours (JST)",
+              office_note: "For business proposals, contracts, and documents",
+              hub_note: "Exclusively for cargo delivery and receiving",
               footer_sub: "Hokkaido • Tokyo • Japan Quality • 2026",
               footer_soul: "We are always happy to chat with you"
             },
             ja: {
               home: "ホーム", about: "会社概要", contact: "お問い合わせ",
-              h1_1: "JDM", h1_2: "パーツ",
+              h1_1: "JDM", h1_2: "SUPPLY",
               hero_sub: "日本のサプライヤーから直送される高品質な自動車部品と商品。お客様に最高の品質をお届けします。",
-              btn_service: "サービスについて",
-              about_title: "私たちの歩み",
-              about_desc: "Okhotsk Logistics 株式会社は2026年に設立されました。私たちは自分たちの仕事を愛し、お客様一人ひとりの信頼を大切にしています。",
-              card1_t: "細部へのこだわり", card1_d: "自分のもののように、一点一点丁寧に検品します。すべての商品は発送前に厳しい選別を通過します。",
-              card2_t: "信頼性", card2_d: "お客様の荷物は安全な手に委ねられています。輸送のあらゆる段階で丁寧な梱包とサポートを提供します。",
-              card3_t: "オープンな姿勢", card3_d: "東京と遠軽のオフィスにより、効率を最大化し、常に連絡が取れる体制を整えています。",
+              btn_service: "会社概要を見る",
+              
+              about_title: "会社概要",
+              about_desc: "Okhotsk Logistics 株式会社は、日本のサプライヤーとグローバル市場を結ぶ信頼できる架け橋です。",
+              about_prof_title: "事業内容",
+              about_prof_name: "会社名", about_prof_name_v: "Okhotsk Logistics 株式会社",
+              about_prof_est: "設立", about_prof_est_v: "2026年2月10日",
+              about_prof_ceo: "代表取締役", about_prof_ceo_v: "Sergey Pogrebnyak",
+              about_prof_biz: "事業内容", about_prof_biz_v: "日本産自動車部品の国際市場への輸出。卸売業および物流コンサルティング。",
+              about_prof_mis: "ミッション", about_prof_mis_v: "「日本の品質を世界へ。国内サプライヤーから世界中のバイヤーまで、シームレスな物流を提供します。」",
+              
+              log_title: "物流ネットワーク",
+              log_sub: "二重管理と最大限の効率化",
+              log_tokyo_t: "東京オフィス（本社）",
+              log_tokyo_d: "日本の金融の中心地に位置する本社は、パートナーとの連携、契約締結、マーケティング、および国際取引の管理を担当しています。",
+              log_hok_t: "北海道倉庫（集約ハブ）",
+              log_hok_d: "北日本にある自社倉庫により、大型自動車部品の保管コストを最適化しています。ここでは、輸出前の徹底した品質検査（検品）、厳重な梱包、貨物の集約を行っています。",
+              
               contact_h: "お問い合わせ",
               contact_sub: "皆様からのご連絡を心よりお待ちしております！お気軽にご相談ください。日本で探しているものを見つけるお手伝いをいたします。",
-              phone_label: "お電話お待ちしております", email_label: "メールお待ちしております", office_label: "東京本社",
+              phone_label: "お電話お待ちしております", 
+              email_label: "メールお待ちしております", 
+              office_label: "東京本社",
+              hub_label: "北海道倉庫・検品ハブ",
+              hub_address: "〒099-0428 北海道紋別郡遠軽町西町3丁目3-165",
+              phone_note: "営業時間内に対応いたします (JST)",
+              office_note: "事業提案、契約、および書類のやり取り専用",
+              hub_note: "大型貨物の配送および受け取り専用",
               footer_sub: "北海道 • 東京 • 日本品質 • 2026年設立",
               footer_soul: "皆様とのコミュニケーションを大切にしています"
             }
@@ -143,6 +197,7 @@
           const handleViewChange = (newView) => {
             setView(newView);
             setMobileMenuOpen(false);
+            window.scrollTo(0, 0);
           };
 
           const Navigation = () => (
@@ -153,32 +208,32 @@
                     <i className="fa-solid fa-gear text-2xl md:text-3xl"></i>
                   </div>
                   <div>
-                    <h1 className="text-xl md:text-3xl font-black italic tracking-tighter leading-none uppercase">OKHOTSK</h1>
-                    <p className="text-red-600 text-[10px] md:text-xs font-black tracking-[0.4em] uppercase">LOGISTICS</p>
+                    <h1 className="text-xl md:text-3xl font-black italic tracking-tighter leading-none uppercase drop-shadow-md">OKHOTSK</h1>
+                    <p className="text-red-600 text-[10px] md:text-xs font-black tracking-[0.4em] uppercase drop-shadow-md">LOGISTICS</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4 md:gap-12 items-center">
                   <div className="hidden lg:flex gap-16">
-                    <button onClick={() => setView('home')} className={`nav-btn text-xl ${view === 'home' ? 'text-red-600' : 'text-white'}`}>{dict.home}</button>
-                    <button onClick={() => setView('about')} className={`nav-btn text-xl ${view === 'about' ? 'text-red-600' : 'text-white'}`}>{dict.about}</button>
-                    <button onClick={() => setView('contact')} className={`nav-btn text-xl ${view === 'contact' ? 'text-red-600' : 'text-white'}`}>{dict.contact}</button>
+                    <button onClick={() => setView('home')} className={`nav-btn text-xl drop-shadow-md ${view === 'home' ? 'text-red-500' : 'text-white'}`}>{dict.home}</button>
+                    <button onClick={() => setView('about')} className={`nav-btn text-xl drop-shadow-md ${view === 'about' ? 'text-red-500' : 'text-white'}`}>{dict.about}</button>
+                    <button onClick={() => setView('contact')} className={`nav-btn text-xl drop-shadow-md ${view === 'contact' ? 'text-red-500' : 'text-white'}`}>{dict.contact}</button>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <div className="flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/5">
+                    <div className="flex bg-slate-900/60 p-1 rounded-xl backdrop-blur-sm border border-white/10 shadow-lg">
                       {['ru', 'en', 'ja'].map((l) => (
                         <button
                           key={l}
                           onClick={() => setLang(l)}
-                          className={`px-2 md:px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${lang === l ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                          className={`px-2 md:px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${lang === l ? 'bg-red-600 text-white shadow-lg' : 'text-white/70 hover:text-white'}`}
                         >
                           {l}
                         </button>
                       ))}
                     </div>
 
-                    <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-white text-3xl p-2 ml-2">
+                    <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-white text-3xl p-2 ml-2 drop-shadow-md">
                       <i className="fa-solid fa-bars-staggered"></i>
                     </button>
                   </div>
@@ -213,13 +268,13 @@
               <main>
                 {view === 'home' && (
                   <section className="hero-section min-h-screen flex items-center justify-center px-6 relative overflow-hidden text-white">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950 z-0"></div>
-                    <div className="relative z-10 text-center animate-up">
-                      <p className="text-red-500 font-black text-sm md:text-2xl mb-4 md:mb-6 tracking-[0.3em] md:tracking-[0.5em] uppercase italic drop-shadow-lg leading-tight">Hokkaido • Tokyo • Global</p>
-                      <h1 className="text-5xl md:text-[12rem] font-black italic tracking-tighter leading-none mb-8 md:mb-12 uppercase drop-shadow-2xl text-glow">
-                        {dict.h1_1} <span className="text-red-600 font-black">{dict.h1_2}</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 z-0"></div>
+                    <div className="relative z-10 text-center animate-up mt-10">
+                      <p className="text-red-500 font-black text-sm md:text-2xl mb-4 md:mb-6 tracking-[0.3em] md:tracking-[0.5em] uppercase italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">Hokkaido • Tokyo • Global</p>
+                      <h1 className="text-5xl md:text-[12rem] font-black italic tracking-tighter leading-none mb-8 md:mb-12 uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] text-glow">
+                        {dict.h1_1} <span className="text-red-500 font-black">{dict.h1_2}</span>
                       </h1>
-                      <p className="text-lg md:text-4xl font-light italic opacity-90 uppercase tracking-widest max-w-5xl mx-auto mb-10 md:mb-16 leading-tight">
+                      <p className="text-lg md:text-4xl font-bold italic opacity-100 uppercase tracking-widest max-w-5xl mx-auto mb-10 md:mb-16 leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                         {dict.hero_sub}
                       </p>
                       <div className="flex justify-center">
@@ -232,99 +287,163 @@
                 )}
 
                 {view === 'about' && (
-                  <section className="animate-up">
-                    <div className="about-section-bg py-40 md:py-64 px-6 text-center text-white">
-                      <h2 className="text-5xl md:text-9xl font-black italic uppercase tracking-tighter mb-10 underline decoration-red-600 decoration-4 md:decoration-8 underline-offset-[10px] md:underline-offset-[20px]">{dict.about_title}</h2>
-                      <p className="max-w-4xl mx-auto text-xl md:text-4xl font-light italic leading-relaxed mb-10 opacity-90 px-4">
-                        {dict.about_desc}
-                      </p>
+                  <section className="animate-up about-section-bg">
+                    <div className="py-32 md:py-48 px-6 text-center text-white relative">
+                      <div className="relative z-10">
+                          <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter mb-8 underline decoration-red-600 decoration-4 md:decoration-8 underline-offset-[10px] md:underline-offset-[20px] drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] text-glow">{dict.about_title}</h2>
+                          <p className="max-w-3xl mx-auto text-xl md:text-3xl font-bold italic leading-relaxed opacity-100 px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                            {dict.about_desc}
+                          </p>
+                      </div>
                     </div>
 
-                    <div className="max-w-7xl mx-auto px-6 -mt-16 md:-mt-32 pb-40 text-white">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-white">
-                        <div className="glass-card p-10 md:p-14 rounded-[40px] md:rounded-[50px] shadow-2xl">
-                          <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-3xl md:text-4xl text-red-600 mb-8 md:mb-10 shadow-inner">
-                            <i className="fa-solid fa-microchip"></i>
-                          </div>
-                          <h3 className="text-2xl md:text-3xl font-black italic mb-4 md:mb-6 uppercase">{dict.card1_t}</h3>
-                          <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed italic">{dict.card1_d}</p>
+                    <div className="max-w-7xl mx-auto px-6 pb-20 text-white relative z-20">
+                      <div className="glass-card p-8 md:p-14 rounded-[30px] md:rounded-[50px] shadow-2xl mb-16 border-t-4 border-t-red-600/50">
+                        <div className="flex items-center gap-4 mb-10 border-b border-white/10 pb-6">
+                            <div className="w-12 h-12 md:w-16 md:h-16 bg-red-600/20 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-red-600 shadow-inner">
+                                <i className="fa-solid fa-building-circle-check"></i>
+                            </div>
+                            <h3 className="text-3xl md:text-5xl font-black italic uppercase">{dict.about_prof_title}</h3>
                         </div>
-                        <div className="glass-card p-10 md:p-14 rounded-[40px] md:rounded-[50px] shadow-2xl border-t-4 border-t-red-600">
-                          <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-3xl md:text-4xl text-red-600 mb-8 md:mb-10 shadow-inner">
-                            <i className="fa-solid fa-box-open"></i>
-                          </div>
-                          <h3 className="text-2xl md:text-3xl font-black italic mb-4 md:mb-6 uppercase">{dict.card2_t}</h3>
-                          <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed italic">{dict.card2_d}</p>
-                        </div>
-                        <div className="glass-card p-10 md:p-14 rounded-[40px] md:rounded-[50px] shadow-2xl">
-                          <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600/20 rounded-3xl flex items-center justify-center text-3xl md:text-4xl text-red-600 mb-8 md:mb-10 shadow-inner">
-                            <i className="fa-solid fa-earth-asia"></i>
-                          </div>
-                          <h3 className="text-2xl md:text-3xl font-black italic mb-4 md:mb-6 uppercase">{dict.card3_t}</h3>
-                          <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed italic">{dict.card3_d}</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                            <div className="space-y-6">
+                                <div>
+                                    <p className="text-red-500 font-black uppercase text-[10px] md:text-sm tracking-[0.2em] mb-1">{dict.about_prof_name}</p>
+                                    <p className="text-xl md:text-2xl font-black italic tracking-tighter drop-shadow-sm">{dict.about_prof_name_v}</p>
+                                </div>
+                                <div>
+                                    <p className="text-red-500 font-black uppercase text-[10px] md:text-sm tracking-[0.2em] mb-1">{dict.about_prof_est}</p>
+                                    <p className="text-xl md:text-2xl font-black italic tracking-tighter drop-shadow-sm">{dict.about_prof_est_v}</p>
+                                </div>
+                                <div>
+                                    <p className="text-red-500 font-black uppercase text-[10px] md:text-sm tracking-[0.2em] mb-1">{dict.about_prof_ceo}</p>
+                                    <p className="text-xl md:text-2xl font-black italic tracking-tighter drop-shadow-sm">{dict.about_prof_ceo_v}</p>
+                                </div>
+                            </div>
+                            <div className="space-y-6">
+                                <div>
+                                    <p className="text-red-500 font-black uppercase text-[10px] md:text-sm tracking-[0.2em] mb-1">{dict.about_prof_biz}</p>
+                                    <p className="text-lg md:text-xl font-medium italic leading-relaxed text-white drop-shadow-sm">{dict.about_prof_biz_v}</p>
+                                </div>
+                                <div className="bg-slate-900/80 p-6 rounded-3xl border border-white/10 shadow-lg">
+                                    <p className="text-red-500 font-black uppercase text-[10px] md:text-sm tracking-[0.2em] mb-2">{dict.about_prof_mis}</p>
+                                    <p className="text-lg md:text-xl font-black italic leading-relaxed text-white drop-shadow-sm">{dict.about_prof_mis_v}</p>
+                                </div>
+                            </div>
                         </div>
                       </div>
+
+                      <div className="mb-20">
+                          <div className="text-center mb-12">
+                              <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter mb-4 drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] text-glow">{dict.log_title}</h2>
+                              <p className="text-xl md:text-2xl text-slate-300 font-bold italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{dict.log_sub}</p>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                              <div className="glass-card p-8 md:p-12 rounded-[30px] md:rounded-[40px] border-t-4 border-t-red-600 relative overflow-hidden group hover:-translate-y-2 transition-all">
+                                  <i className="fa-solid fa-city absolute -bottom-10 -right-10 text-9xl text-white/5 group-hover:text-white/10 transition-colors"></i>
+                                  <div className="relative z-10">
+                                      <div className="w-16 h-16 bg-red-600/20 rounded-2xl flex items-center justify-center text-3xl text-red-600 mb-6 shadow-inner">
+                                          <i className="fa-solid fa-building"></i>
+                                      </div>
+                                      <h3 className="text-2xl md:text-3xl font-black italic mb-4 uppercase drop-shadow-sm">{dict.log_tokyo_t}</h3>
+                                      <p className="text-slate-200 text-base md:text-lg font-medium leading-relaxed italic drop-shadow-sm">{dict.log_tokyo_d}</p>
+                                  </div>
+                              </div>
+                              
+                              <div className="glass-card p-8 md:p-12 rounded-[30px] md:rounded-[40px] border-t-4 border-t-red-600 relative overflow-hidden group hover:-translate-y-2 transition-all">
+                                  <i className="fa-solid fa-boxes-stacked absolute -bottom-10 -right-10 text-9xl text-white/5 group-hover:text-white/10 transition-colors"></i>
+                                  <div className="relative z-10">
+                                      <div className="w-16 h-16 bg-red-600/20 rounded-2xl flex items-center justify-center text-3xl text-red-600 mb-6 shadow-inner">
+                                          <i className="fa-solid fa-warehouse"></i>
+                                      </div>
+                                      <h3 className="text-2xl md:text-3xl font-black italic mb-4 uppercase drop-shadow-sm">{dict.log_hok_t}</h3>
+                                      <p className="text-slate-200 text-base md:text-lg font-medium leading-relaxed italic drop-shadow-sm">{dict.log_hok_d}</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
                     </div>
                   </section>
                 )}
 
+                {/* 3. СТРАНИЦА КОНТАКТОВ */}
                 {view === 'contact' && (
-                  <section className="animate-up pt-40 md:pt-52 pb-40 px-6 max-w-7xl mx-auto text-white">
-                    <div className="flex flex-col items-center text-center mb-16 md:mb-24">
-                        <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-8 leading-none">
-                           <span className="text-red-600">{dict.contact_h}</span>
-                        </h2>
-                        <p className="text-xl md:text-3xl text-slate-400 font-light italic max-w-3xl leading-relaxed px-4">
-                            {dict.contact_sub}
-                        </p>
-                    </div>
-
-                    <div className="max-w-6xl mx-auto space-y-6 md:space-y-12">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
-                        
-                        {/* ТЕЛЕФОН */}
-                        <div className="glass-card p-6 md:p-12 rounded-[30px] md:rounded-[50px] flex items-center gap-5 md:gap-10">
-                          <div className="w-14 h-14 md:w-24 md:h-24 bg-red-600/10 rounded-[20px] md:rounded-[35px] flex items-center justify-center text-2xl md:text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0">
-                            <i className="fa-solid fa-phone-volume"></i>
-                          </div>
-                          <div className="flex-1 min-w-0 text-left">
-                            <p className="text-red-600 font-black uppercase text-[9px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-1">{dict.phone_label}</p>
-                            <p className="text-[14px] min-[375px]:text-[16px] sm:text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter break-words">080-5134-9760</p>
-                          </div>
-                        </div>
-                        
-                        {/* АДРЕС: Добавлена запятая после 1-2-1 */}
-                        <div className="glass-card p-6 md:p-12 rounded-[30px] md:rounded-[50px] flex items-center gap-5 md:gap-10">
-                          <div className="w-14 h-14 md:w-24 md:h-24 bg-red-600/10 rounded-[20px] md:rounded-[35px] flex items-center justify-center text-2xl md:text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0">
-                            <i className="fa-solid fa-map-location-dot"></i>
-                          </div>
-                          <div className="flex-1 min-w-0 text-left">
-                            <p className="text-red-600 font-black uppercase text-[9px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-1">{dict.office_label}</p>
-                            <p className="text-[14px] min-[375px]:text-[16px] sm:text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter uppercase break-words leading-tight">1-2-1, Ojima, Koto City, Tokyo</p>
-                          </div>
+                  <section className="animate-up contact-section-bg pt-40 md:pt-52 pb-40 px-6 relative">
+                    <div className="max-w-7xl mx-auto text-white relative z-10">
+                        <div className="flex flex-col items-center text-center mb-16 md:mb-24">
+                            <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-8 leading-none">
+                               <span className="text-red-500 drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] text-glow">{dict.contact_h}</span>
+                            </h2>
+                            <p className="text-xl md:text-3xl text-slate-200 font-bold italic max-w-3xl leading-relaxed px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                {dict.contact_sub}
+                            </p>
                         </div>
 
-                      </div>
+                        <div className="max-w-7xl mx-auto space-y-6 md:space-y-12">
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                            
+                            <div className="glass-card p-6 md:p-10 rounded-[30px] md:rounded-[40px] flex items-start gap-5 md:gap-8">
+                              <div className="w-14 h-14 md:w-20 md:h-20 bg-red-600/20 rounded-[20px] md:rounded-[30px] flex items-center justify-center text-2xl md:text-3xl text-red-500 border border-red-600/30 shadow-inner shrink-0 mt-1">
+                                <i className="fa-solid fa-phone-volume"></i>
+                              </div>
+                              <div className="flex-1 min-w-0 text-left flex flex-col justify-center h-full">
+                                <div>
+                                  <p className="text-red-500 font-black uppercase text-[9px] md:text-xs tracking-[0.2em] mb-1 drop-shadow-sm">{dict.phone_label}</p>
+                                  <p className="text-[14px] min-[375px]:text-[16px] sm:text-xl md:text-2xl font-black italic tracking-tighter break-words drop-shadow-md">{dict.phone_label === "Будем рады вашему звонку" ? "080-5134-9760" : "080-5134-9760"}</p>
+                                </div>
+                                <p className="text-[10px] md:text-[11px] text-slate-300 mt-3 pt-3 border-t border-white/20 italic leading-relaxed">{dict.phone_note}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="glass-card p-6 md:p-10 rounded-[30px] md:rounded-[40px] flex items-start gap-5 md:gap-8 border-t-2 border-t-red-500/50">
+                              <div className="w-14 h-14 md:w-20 md:h-20 bg-red-600/20 rounded-[20px] md:rounded-[30px] flex items-center justify-center text-2xl md:text-3xl text-red-500 border border-red-600/30 shadow-inner shrink-0 mt-1">
+                                <i className="fa-solid fa-building"></i>
+                              </div>
+                              <div className="flex-1 min-w-0 text-left flex flex-col justify-center h-full">
+                                <div>
+                                  <p className="text-red-500 font-black uppercase text-[9px] md:text-xs tracking-[0.2em] mb-1 drop-shadow-sm">{dict.office_label}</p>
+                                  <p className="text-[12px] min-[375px]:text-[14px] sm:text-lg md:text-xl font-black italic tracking-tighter uppercase break-words leading-tight drop-shadow-md">1-2-1, Ojima, Koto City, Tokyo</p>
+                                </div>
+                                <p className="text-[10px] md:text-[11px] text-slate-300 mt-3 pt-3 border-t border-white/20 italic leading-relaxed">{dict.office_note}</p>
+                              </div>
+                            </div>
 
-                      {/* ПОЧТА */}
-                      <div className="glass-card p-6 md:p-12 rounded-[30px] md:rounded-[50px] flex items-center gap-5 md:gap-10 w-full">
-                        <div className="w-14 h-14 md:w-24 md:h-24 bg-red-600/10 rounded-[20px] md:rounded-[35px] flex items-center justify-center text-2xl md:text-4xl text-red-600 border border-red-600/20 shadow-lg shrink-0">
-                          <i className="fa-solid fa-at"></i>
-                        </div>
-                        <div className="flex-1 min-w-0 text-left">
-                          <p className="text-red-600 font-black uppercase text-[9px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-1">{dict.email_label}</p>
-                          <p className="text-[14px] min-[375px]:text-[16px] sm:text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter break-all sm:break-normal">okhotsklogistics@gmail.com</p>
-                        </div>
-                      </div>
+                            <div className="glass-card p-6 md:p-10 rounded-[30px] md:rounded-[40px] flex items-start gap-5 md:gap-8 border-t-2 border-t-red-500/50">
+                              <div className="w-14 h-14 md:w-20 md:h-20 bg-red-600/20 rounded-[20px] md:rounded-[30px] flex items-center justify-center text-2xl md:text-3xl text-red-500 border border-red-600/30 shadow-inner shrink-0 mt-1">
+                                <i className="fa-solid fa-boxes-stacked"></i>
+                              </div>
+                              <div className="flex-1 min-w-0 text-left flex flex-col justify-center h-full">
+                                <div>
+                                  <p className="text-red-500 font-black uppercase text-[9px] md:text-xs tracking-[0.2em] mb-1 drop-shadow-sm">{dict.hub_label}</p>
+                                  <p className="text-[11px] min-[375px]:text-[13px] sm:text-base md:text-lg font-black italic tracking-tighter uppercase break-words leading-tight drop-shadow-md">{dict.hub_address}</p>
+                                </div>
+                                <p className="text-[10px] md:text-[11px] text-slate-300 mt-3 pt-3 border-t border-white/20 italic leading-relaxed">{dict.hub_note}</p>
+                              </div>
+                            </div>
 
+                          </div>
+
+                          <div className="glass-card p-6 md:p-12 rounded-[30px] md:rounded-[50px] flex items-center gap-5 md:gap-10 w-full border-t-4 border-t-red-600/30">
+                            <div className="w-14 h-14 md:w-24 md:h-24 bg-red-600/20 rounded-[20px] md:rounded-[35px] flex items-center justify-center text-2xl md:text-4xl text-red-500 border border-red-600/30 shadow-inner shrink-0">
+                              <i className="fa-solid fa-at"></i>
+                            </div>
+                            <div className="flex-1 min-w-0 text-left">
+                              <p className="text-red-500 font-black uppercase text-[9px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] mb-1 drop-shadow-sm">{dict.email_label}</p>
+                              <p className="text-[14px] min-[375px]:text-[16px] sm:text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter break-all sm:break-normal drop-shadow-md">okhotsklogistics@gmail.com</p>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                   </section>
                 )}
               </main>
 
-              <footer className="bg-slate-950 py-24 md:py-32 px-6 border-t border-white/5 text-center text-white">
+              <footer className="bg-slate-950 py-24 md:py-32 px-6 text-center text-white relative z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
                 <div className="max-w-7xl mx-auto px-4">
-                  <span className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter block mb-6">OKHOTSK <span className="text-red-600 font-black">LOGISTICS</span></span>
+                  <span className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter block mb-6 drop-shadow-md">OKHOTSK <span className="text-red-600 font-black">LOGISTICS</span></span>
                   <p className="text-[10px] md:text-sm text-slate-500 font-black uppercase tracking-[0.4em] md:tracking-[0.8em] mb-12 italic opacity-50 tracking-widest leading-loose">{dict.footer_sub}</p>
                   <p className="text-[10px] md:text-xs font-black text-slate-800 uppercase tracking-widest italic opacity-40 leading-loose">
                     © 2026 Okhotsk Logistics Co., Ltd. • {dict.footer_soul}
